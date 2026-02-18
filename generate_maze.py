@@ -61,5 +61,6 @@ def generate_maze_with_prim_algo():
             maze.walls_to_remove.add(edge)
             maze.add_edge_from_cell(new_cell)
 
+    print(maze.grid)
 
 generate_maze_with_prim_algo()
