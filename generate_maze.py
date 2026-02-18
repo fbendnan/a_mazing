@@ -1,66 +1,110 @@
 import random
 
+DIRS = {
+    'N': (0, -1),
+    'S': (0, 1),
+    'E': (1, 0),
+    'W': (-1, 0)
+}
 
-class cell_info:
+
+class CellInfo:
     def __init__(self, cell):
         self.cell = cell
         self.is_visited = False
-        self.walls = {}
+        self.walls = {
+            'N': True,
+            'S': True,
+            'E': True,
+            'W': True
+        }
 
-    def fill_cell_walls(self):
-        self.walls['N'] = (((self.cell[0]), (self.cell[1] - 1)), (self.cell))
-        self.walls['W'] = (((self.cell[0] - 1), (self.cell[1])), (self.cell))
-        self.walls['E'] = (((self.cell[0] + 1), (self.cell[1])), self.cell)
-        self.walls['S'] = (((self.cell[0]), (self.cell[1] + 1)), self.cell)
+    @staticmethod
+    def remove_wall(cell_a, cell_b):
+        dx = cell_b.cell[0] - cell_a.cell[0]
+        dy = cell_b.cell[1] - cell_a.cell[1]
+
+        if dx == 1:
+            cell_a.walls['E'] = False
+            cell_b.walls['W'] = False
+        elif dx == -1:
+            cell_a.walls['W'] = False
+            cell_b.walls['E'] = False
+        elif dy == 1:
+            cell_a.walls['S'] = False
+            cell_b.walls['N'] = False
+        elif dy == -1:
+            cell_a.walls['N'] = False
+            cell_b.walls['S'] = False
 
 
-class maze_manager:
+class MazeManager:
     def __init__(self):
-        self.frontier_edges = set()
         self.grid = {}
-        self.walls_to_remove = set()
+        self.frontier_edges = set()
 
     def initialise_grid(self, height, width):
         for x in range(height):
             for y in range(width):
-                c = cell_info((x, y))
-                c.fill_cell_walls()
-                self.grid[(x, y)] = c
+                self.grid[(x, y)] = CellInfo((x, y))
 
-    def add_edge_from_cell(self, cell):
-        for wall in cell.walls.values():
-            neighbor_coord, current_coord = wall
-            if neighbor_coord in self.grid:
-                self.frontier_edges.add(wall)
+    def add_frontier_from_cell(self, cell):
+        x, y = cell.cell
+        for dx, dy in DIRS.values():
+            nx, ny = x + dx, y + dy
+            if (nx, ny) in self.grid:
+                neighbor = self.grid[(nx, ny)]
+                if not neighbor.is_visited:
+                    self.frontier_edges.add((cell, neighbor))
 
-    def mark_start_cell(self, start_x, start_y):
-        start = self.grid[(start_x, start_y)]
+    def mark_start_cell(self, x, y):
+        start = self.grid[(x, y)]
         start.is_visited = True
-        self.add_edge_from_cell(start)
-
-    def remove_edge(self, edge):
-        self.frontier_edges.remove(edge)
+        self.add_frontier_from_cell(start)
 
 
-def generate_maze_with_prim_algo():
-    start_point = (12, 15)
-    maze = maze_manager()
-    maze.initialise_grid(start_point[0], start_point[1])
-    maze.mark_start_cell(2, 3)
+def generate_maze_with_prim_algo(height=12, width=15, start=(2, 3)):
+    maze = MazeManager()
+    maze.initialise_grid(height, width)
+    maze.mark_start_cell(*start)
+
     while maze.frontier_edges:
-        edge = random.choice(list(maze.frontier_edges))
-        maze.remove_edge(edge)
+        cell_a, cell_b = random.choice(tuple(maze.frontier_edges))
+        maze.frontier_edges.remove((cell_a, cell_b))
 
-        neighbor_coord, current_coord = edge
-        cell_a = maze.grid[neighbor_coord]
-        cell_b = maze.grid[current_coord]
+        if cell_b.is_visited:
+            continue
 
-        if cell_a.is_visited != cell_b.is_visited:
-            new_cell = cell_b if cell_a.is_visited else cell_a
-            new_cell.is_visited = True
-            maze.walls_to_remove.add(edge)
-            maze.add_edge_from_cell(new_cell)
+        CellInfo.remove_wall(cell_a, cell_b)
+        cell_b.is_visited = True
+        maze.add_frontier_from_cell(cell_b)
 
-    print(maze.grid)
+    return maze
 
-generate_maze_with_prim_algo()
+
+maze = generate_maze_with_prim_algo()
+
+def print_maze(maze, height=12, width=15):
+    grid = [['#' for _ in range(width*2+1)] for _ in range(height*2+1)]
+
+    for x in range(height):
+        for y in range(width):
+            cx, cy = x*2+1, y*2+1
+            grid[cx][cy] = ' '
+
+            cell = maze.grid[(x, y)]
+
+            if not cell.walls['N']:
+                grid[cx-1][cy] = ' '
+            if not cell.walls['S']:
+                grid[cx+1][cy] = ' '
+            if not cell.walls['W']:
+                grid[cx][cy-1] = ' '
+            if not cell.walls['E']:
+                grid[cx][cy+1] = ' '
+
+    for row in grid:
+        print(''.join(row))
+
+
+print_maze(maze)
