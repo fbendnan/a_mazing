@@ -1,38 +1,30 @@
-from mlx.mlx import Mlx
+import curses
+
+width = 10
+height = 15
+def main(stdscr):
+    stdscr.clear()
+    y = 8
+    x = 15
+    while True:
+        stdscr.clear()
+        
+        max_y, max_x = stdscr.getmaxyx()
+        y = max(0, min(y, max_y - 2))
+        x = max(0, min(x, max_x - 2))
+        stdscr.addstr(y, x, "P")
+        stdscr.refresh()
+        key = stdscr.getch()
+        if key == ord('q'):
+            break
+        elif key == curses.KEY_UP:
+            y -=1
+        elif key == curses.KEY_DOWN:
+            y +=1
+        elif key == curses.KEY_LEFT:
+            x -=1
+        elif key == curses.KEY_RIGHT:
+            x +=1
 
 
-CELL_SIZE = 40
-
-RED_COLOR = 0x00FF0000
-
-class Display_maze:
-    def __init__(self, height, width, grid):
-        self.height = height
-        self.width = width
-        self.grid = grid
-        self.mlx
-        self.mlx_ptr
-        self.win_ptr
-
-
-    def initialization(self):
-        self.mlx = Mlx()
-        self.mlx_ptr = self.mlx.mlx_init()
-
-    def windows(self):
-        self.win_ptr = self.mlx.mlx_new_window(
-            self.mlx_ptr, self.width, self.height, "maze"
-            )
-    
-    def draw_walls(self, col, row):
-        x = col * CELL_SIZE
-        y = row * CELL_SIZE
-        for cell in self.grid:
-            if cell.walls['N']:
-                self.mlx.mlx_pixel_put(self.mlx_ptr, self.win_ptr, x, y, RED_COLOR)
-            if cell.walls['S']:
-                self.mlx.mlx_pixel_put(self.mlx_ptr, self.win_ptr, x, y, RED_COLOR)
-            if cell.walls['E']:
-                self.mlx.mlx_pixel_put(self.mlx_ptr, self.win_ptr, x, y, RED_COLOR)
-            if cell.walls['W']:
-                self.mlx.mlx_pixel_put(self.mlx_ptr, self.win_ptr, x, y, RED_COLOR)
+curses.wrapper(main)
