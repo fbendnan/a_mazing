@@ -1,30 +1,65 @@
 import curses
+from gen_maze import Maze
 
-width = 10
-height = 15
-def main(stdscr):
+WIDTH = 10
+HEIGHT = 8
+
+CELL_W = 2
+CELL_H = 1
+WALL = '█'
+
+def build_canvas(maze):
+    canvas_height = HEIGHT * (CELL_H + 1) + 1
+    canvas_width = WIDTH * (CELL_W + 1) + 1
+
+    canvas = [[WALL for _ in range(canvas_width)] for _ in range(canvas_height)]
+
+    for x in range(HEIGHT):
+        for y in range(WIDTH):
+            cell = maze.grid[x][y]
+
+            top = x * (CELL_H + 1) + 1
+            left = y * (CELL_W + 1) + 1
+
+            for i in range(CELL_H):
+                for j in range(CELL_W):
+                    canvas[top + i][left + j] = ' '
+
+            if not cell.walls['N']:
+                for j in range(CELL_W):
+                    canvas[top - 1][left + j] = ' '
+            if not cell.walls['S']:
+                for j in range(CELL_W):
+                    canvas[top + CELL_H][left + j] = ' '
+            if not cell.walls['W']:
+                for i in range(CELL_H):
+                    canvas[top + i][left - 1] = ' '
+            if not cell.walls['E']:
+                for i in range(CELL_H):
+                    canvas[top + i][left + CELL_W] = ' '
+
+    return canvas
+
+def draw_maze(stdscr, canvas):
     stdscr.clear()
-    y = 8
-    x = 15
+    for i, row in enumerate(canvas):
+        stdscr.addstr(i, 0, ''.join(row))
+    stdscr.refresh()
+
+def main(stdscr):
+    curses.curs_set(0)
+    stdscr.keypad(True)
+
+    maze = Maze(HEIGHT, WIDTH)
+    maze.generate(0, 0)
+
+    canvas = build_canvas(maze)
+    draw_maze(stdscr, canvas)
+
     while True:
-        stdscr.clear()
-        
-        max_y, max_x = stdscr.getmaxyx()
-        y = max(0, min(y, max_y - 2))
-        x = max(0, min(x, max_x - 2))
-        stdscr.addstr(y, x, "P")
-        stdscr.refresh()
         key = stdscr.getch()
         if key == ord('q'):
             break
-        elif key == curses.KEY_UP:
-            y -=1
-        elif key == curses.KEY_DOWN:
-            y +=1
-        elif key == curses.KEY_LEFT:
-            x -=1
-        elif key == curses.KEY_RIGHT:
-            x +=1
 
-
-curses.wrapper(main)
+if __name__ == "__main__":
+    curses.wrapper(main)
