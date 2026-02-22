@@ -52,17 +52,21 @@ class Maze:
             cell_a.walls['W'] = False
             cell_b.walls['E'] = False
 
-    def mark_42_cell(self):
-        mid_h = self.height/2
-        mid_w = self.width/2
+    # def mark_42_cell(self):
+    #     mid_h = int(self.height/2)
+    #     mid_w = int(self.width/2)
 
-        
+    #     for dx, dy in CELLS_42_offset:
+    #         cell = self.grid[mid_h-dx][mid_w-dy]
+    #         print(f"{cell.x}, {cell.y}")
+    #         cell.is_visited = True
+
 
     def generate(self, start_x=0, start_y=0):
         start = self.grid[start_x][start_y]
         start.is_visited = True
         self.add_frontier(start)
-
+        self.mark_42_cell()
         while self.frontier:
             cell_b = random.choice(tuple(self.frontier))
             self.frontier.remove(cell_b)
