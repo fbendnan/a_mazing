@@ -9,6 +9,13 @@ DIRS = {
     'W': (-1, 0)
 }
 
+CELLS_42_offset = [
+    (0, -1), (0, -2), (0, -3), (0, 1), (0, 2), (0, 3),
+    (1, 3), (1, -3),
+    (2, -3), (2, 1), (2, 2), (2, 3),
+    (-1, -1), (-1, 1),
+    (-2, -1), (-2, 1), (-2, 2), (-2, 3)
+]
 
 class Maze:
     def __init__(self, height, width):
@@ -45,6 +52,12 @@ class Maze:
             cell_a.walls['W'] = False
             cell_b.walls['E'] = False
 
+    def mark_42_cell(self):
+        mid_h = self.height/2
+        mid_w = self.width/2
+
+        
+
     def generate(self, start_x=0, start_y=0):
         start = self.grid[start_x][start_y]
         start.is_visited = True
@@ -69,28 +82,6 @@ class Maze:
             cell_b.is_visited = True
             self.add_frontier(cell_b)
 
-    # def print_maze(self):
-    #     H, W = self.height, self.width
-    #     grid = [['%' for _ in range(W*2 + 1)] for _ in range(H*2 + 1)]
 
-    #     for x in range(H):
-    #         for y in range(W):
-    #             cx, cy = x*2 + 1, y*2 + 1
-    #             grid[cx][cy] = ' '
-    #             cell = self.grid[x][y]
-    #             if not cell.walls['N']:
-    #                 grid[cx-1][cy] = ' '
-    #             if not cell.walls['S']:
-    #                 grid[cx+1][cy] = ' '
-    #             if not cell.walls['W']:
-    #                 grid[cx][cy-1] = ' '
-    #             if not cell.walls['E']:
-    #                 grid[cx][cy+1] = ' '
-
-    #     for row in grid:
-    #         print(''.join(row))
-
-maze = Maze(height=5, width=9)
-maze.generate(start_x=0, start_y=0)
-# print(maze.grid)
-# maze.print_maze()
+# maze = Maze(height=5, width=9)
+# maze.generate(start_x=0, start_y=0)

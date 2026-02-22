@@ -1,65 +1,68 @@
 import curses
 from gen_maze import Maze
 
-WIDTH = 10
-HEIGHT = 8
 
+MAZE_WIDTH = 10
+MAZE_HEIGHT = 8
+
+
+WALL = '█'
 CELL_W = 2
 CELL_H = 1
-WALL = '█'
 
-def build_canvas(maze):
-    canvas_height = HEIGHT * (CELL_H + 1) + 1
-    canvas_width = WIDTH * (CELL_W + 1) + 1
+class MazeDrawing:
+    def __init__(self):
+        self.canvas_height = MAZE_HEIGHT * (CELL_H + 1) + 1
+        self.canvas_width = MAZE_WIDTH * (CELL_W + 1) + 1
+        self.maze_canvas = [[WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)]
+        self.maze = Maze(MAZE_HEIGHT, MAZE_WIDTH)
+        
+    def build_maze_canvas(self):
+        for x in range(MAZE_HEIGHT):
+            for y in range(MAZE_WIDTH):
+                cell = self.maze.grid[x][y]
 
-    canvas = [[WALL for _ in range(canvas_width)] for _ in range(canvas_height)]
+                row_pos = x * (CELL_H + 1) + 1
+                col_pos = y * (CELL_W + 1) + 1
 
-    for x in range(HEIGHT):
-        for y in range(WIDTH):
-            cell = maze.grid[x][y]
-
-            top = x * (CELL_H + 1) + 1
-            left = y * (CELL_W + 1) + 1
-
-            for i in range(CELL_H):
-                for j in range(CELL_W):
-                    canvas[top + i][left + j] = ' '
-
-            if not cell.walls['N']:
-                for j in range(CELL_W):
-                    canvas[top - 1][left + j] = ' '
-            if not cell.walls['S']:
-                for j in range(CELL_W):
-                    canvas[top + CELL_H][left + j] = ' '
-            if not cell.walls['W']:
                 for i in range(CELL_H):
-                    canvas[top + i][left - 1] = ' '
-            if not cell.walls['E']:
-                for i in range(CELL_H):
-                    canvas[top + i][left + CELL_W] = ' '
+                    for j in range(CELL_W):
+                        self.maze_canvas[row_pos + i][col_pos + j] = ' '
 
-    return canvas
+                if not cell.walls['N']:
+                    for j in range(CELL_W):
+                        self.maze_canvas[row_pos - 1][col_pos + j] = ' '
+                if not cell.walls['S']:
+                    for j in range(CELL_W):
+                        self.maze_canvas[row_pos + CELL_H][col_pos + j] = ' '
+                if not cell.walls['W']:
+                    for i in range(CELL_H):
+                        self.maze_canvas[row_pos + i][col_pos - 1] = ' '
+                if not cell.walls['E']:
+                    for i in range(CELL_H):
+                        self.maze_canvas[row_pos + i][col_pos + CELL_W] = ' '
 
-def draw_maze(stdscr, canvas):
-    stdscr.clear()
-    for i, row in enumerate(canvas):
-        stdscr.addstr(i, 0, ''.join(row))
-    stdscr.refresh()
+    def draw(self, stdscr):
+        curses.curs_set(0)
+        stdscr.keypad(True)
+        self.maze.generate(2,4)
+        self.build_maze_canvas()
+        curses.use_default_colors()
+        curses.start_color()
+        curses.init_pair(1, curses.COLOR_CYAN, -1)
+        for row_idx, row in enumerate(self.maze_canvas):
+            for col_idx, char in enumerate(row):
+                if char == WALL:
+                    stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
+                else:
+                    stdscr.addstr(row_idx, col_idx, char)
 
-def main(stdscr):
-    curses.curs_set(0)
-    stdscr.keypad(True)
-
-    maze = Maze(HEIGHT, WIDTH)
-    maze.generate(0, 0)
-
-    canvas = build_canvas(maze)
-    draw_maze(stdscr, canvas)
-
-    while True:
-        key = stdscr.getch()
-        if key == ord('q'):
-            break
+        stdscr.refresh()
+        while True:
+            key = stdscr.getch()
+            if key == ord('q'):
+                break
 
 if __name__ == "__main__":
-    curses.wrapper(main)
+    d = MazeDrawing()
+    curses.wrapper(d.draw)
