@@ -63,10 +63,11 @@ class Maze:
 
 
     def generate(self, start_x=0, start_y=0):
+        # random.seed(42)
         start = self.grid[start_x][start_y]
         start.is_visited = True
         self.add_frontier(start)
-        self.mark_42_cell()
+        # self.mark_42_cell()
         while self.frontier:
             cell_b = random.choice(tuple(self.frontier))
             self.frontier.remove(cell_b)

@@ -42,26 +42,46 @@ class MazeDrawing:
                     for i in range(CELL_H):
                         self.maze_canvas[row_pos + i][col_pos + CELL_W] = ' '
 
-    def draw(self, stdscr):
-        curses.curs_set(0)
-        stdscr.keypad(True)
-        self.maze.generate(2,4)
-        self.build_maze_canvas()
-        curses.use_default_colors()
-        curses.start_color()
-        curses.init_pair(1, curses.COLOR_CYAN, -1)
-        for row_idx, row in enumerate(self.maze_canvas):
-            for col_idx, char in enumerate(row):
-                if char == WALL:
-                    stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
-                else:
-                    stdscr.addstr(row_idx, col_idx, char)
 
-        stdscr.refresh()
-        while True:
-            key = stdscr.getch()
-            if key == ord('q'):
-                break
+    def choices(self, stdscr):
+        stdscr.addstr(self.canvas_height, 1, "===A-Maze-ing===")
+        stdscr.addstr(self.canvas_height + 1, 1, "1. Re-generate a new maze")
+        stdscr.addstr(self.canvas_height + 2, 1, "2. Show/Hide path from entry to exit")
+        stdscr.addstr(self.canvas_height + 3, 1, "3. Rotate maze colors")
+        stdscr.addstr(self.canvas_height + 4, 1, "4. Quit")
+        stdscr.addstr(self.canvas_height + 5, 2, "choice? (1-4):")
+
+
+    def draw(self, stdscr):
+        try:
+            curses.curs_set(0)
+            stdscr.keypad(True)
+            self.maze.generate(2,4)
+            self.build_maze_canvas()
+            curses.use_default_colors()
+            curses.start_color()
+            curses.init_pair(1, curses.COLOR_CYAN, -1)
+            for row_idx, row in enumerate(self.maze_canvas):
+                for col_idx, char in enumerate(row):
+                    if char == WALL:
+                        stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
+                    else:
+                        stdscr.addstr(row_idx, col_idx, char)
+            self.choices(stdscr)
+            stdscr.refresh()
+            while True:
+                key = stdscr.getch()
+                if key == ord('1'):
+                    ...
+                elif key == ord('2'):
+                    ...
+                elif key == ord('3'):
+                    ...
+                elif key == ord('4'):
+                    break
+        except Exception:
+            stdscr.addstr()
+            
 
 if __name__ == "__main__":
     d = MazeDrawing()
