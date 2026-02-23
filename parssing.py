@@ -6,7 +6,7 @@ def mandatory_exist(configuration: dict):
     return True
 
 
-def main():
+def parsser():
     configuration = {}
     try:
         with open('config.txt', 'r') as configuratin_file:
@@ -88,9 +88,8 @@ def main():
                and proba4 is False:
                 raise ValueError("The entry and Exit are invalid "
                                  "for this maze")
-        print(configuration)
+        return configuration
     except Exception as e:
         print(f"Error: {e}")
 
-
-main()
+parsser()

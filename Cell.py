@@ -4,3 +4,4 @@ class Cell:
         self.y = y
         self.is_visited = False
         self.walls = {'N': True, 'S': True, 'E': True, 'W': True}
+        self.is_cell_42 = False

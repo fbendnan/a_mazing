@@ -2,8 +2,8 @@ import curses
 from gen_maze import Maze
 
 ###########
-MAZE_WIDTH = 20
-MAZE_HEIGHT = 17
+MAZE_WIDTH = 10
+MAZE_HEIGHT = 10
 
 
 WALL = '█'
@@ -70,7 +70,7 @@ class MazeDrawing:
         self.scr_height, self.scr_width = stdscr.getmaxyx()
         if self.scr_height > self.canvas_height + 6 and self.scr_width > self.canvas_width:
             curses.curs_set(0)
-            stdscr.keypad(True)
+            # stdscr.keypad(True)
             self.maze.generate(2,4)
             self.build_maze_canvas()
             curses.start_color()
