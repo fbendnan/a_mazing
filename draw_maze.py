@@ -1,9 +1,9 @@
 import curses
 from gen_maze import Maze
 
-
-MAZE_WIDTH = 10
-MAZE_HEIGHT = 8
+###########
+MAZE_WIDTH = 20
+MAZE_HEIGHT = 17
 
 
 WALL = '█'
@@ -16,6 +16,8 @@ class MazeDrawing:
         self.canvas_width = MAZE_WIDTH * (CELL_W + 1) + 1
         self.maze_canvas = [[WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)]
         self.maze = Maze(MAZE_HEIGHT, MAZE_WIDTH)
+        self.scr_height = 0
+        self.scr_width = 0
         
     def build_maze_canvas(self):
         for x in range(MAZE_HEIGHT):
@@ -43,7 +45,7 @@ class MazeDrawing:
                         self.maze_canvas[row_pos + i][col_pos + CELL_W] = ' '
 
 
-    def choices(self, stdscr):
+    def print_choices(self, stdscr):
         stdscr.addstr(self.canvas_height, 1, "===A-Maze-ing===")
         stdscr.addstr(self.canvas_height + 1, 1, "1. Re-generate a new maze")
         stdscr.addstr(self.canvas_height + 2, 1, "2. Show/Hide path from entry to exit")
@@ -52,14 +54,27 @@ class MazeDrawing:
         stdscr.addstr(self.canvas_height + 5, 2, "choice? (1-4):")
 
 
+    def put_entry_and_exit(self,stdscr, entry, exit):
+        x, y = entry
+        i, j = exit
+        row_pos_entry = x * (CELL_H + 1) + 1
+        col_pos_entry = y * (CELL_W + 1) + 1
+        row_pos_exit = i * (CELL_H + 1) + 1
+        col_pos_exit = j * (CELL_W + 1) + 1
+
+        stdscr.addstr(row_pos_entry, col_pos_entry, "🐈")
+        stdscr.addstr(row_pos_exit, col_pos_exit, "🧀")
+
+
     def draw(self, stdscr):
-        try:
+        self.scr_height, self.scr_width = stdscr.getmaxyx()
+        if self.scr_height > self.canvas_height + 6 and self.scr_width > self.canvas_width:
             curses.curs_set(0)
             stdscr.keypad(True)
             self.maze.generate(2,4)
             self.build_maze_canvas()
-            curses.use_default_colors()
             curses.start_color()
+            curses.use_default_colors()
             curses.init_pair(1, curses.COLOR_CYAN, -1)
             for row_idx, row in enumerate(self.maze_canvas):
                 for col_idx, char in enumerate(row):
@@ -67,7 +82,10 @@ class MazeDrawing:
                         stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
                     else:
                         stdscr.addstr(row_idx, col_idx, char)
-            self.choices(stdscr)
+
+            #############
+            self.put_entry_and_exit(stdscr, (2,2), (6,7))
+            self.print_choices(stdscr)
             stdscr.refresh()
             while True:
                 key = stdscr.getch()
@@ -79,8 +97,13 @@ class MazeDrawing:
                     ...
                 elif key == ord('4'):
                     break
-        except Exception:
-            stdscr.addstr()
+        else:
+            stdscr.clear()
+            stdscr.addstr(self.scr_height//2, self.scr_width//2 - 16, "Size of terminale is too short")
+            stdscr.addstr(self.scr_height//2 + 1, self.scr_width//2 - 10, "resize it please")
+            stdscr.refresh()
+            stdscr.getch()
+
             
 
 if __name__ == "__main__":

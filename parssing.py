@@ -83,6 +83,7 @@ def main():
                 and (exit[0] == width - 1 and exit[1] < height)
             proba4: bool = (entry[0] == width - 1 and entry[1] < height) \
                 and (exit[0] == 0 and exit[1] < height)
+            
             if proba1 is False and proba2 is False and proba3 is False \
                and proba4 is False:
                 raise ValueError("The entry and Exit are invalid "
