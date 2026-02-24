@@ -64,7 +64,6 @@ class Maze:
             self.is_cell_42 = True
 
 
-
     def generate(self, start_x=0, start_y=0):
         random.seed(42)
         start = self.grid[start_x][start_y]
