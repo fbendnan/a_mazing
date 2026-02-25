@@ -2,7 +2,7 @@ import curses
 from gen_maze import Maze
 
 ###########
-MAZE_WIDTH = 10
+MAZE_WIDTH = 15
 MAZE_HEIGHT = 10
 
 

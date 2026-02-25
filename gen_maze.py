@@ -31,7 +31,7 @@ class Maze:
         x, y = cell.x, cell.y
         for dir, (dx, dy) in DIRS.items():
             nx, ny = x + dx, y + dy
-            if self.in_bounds(nx, ny):
+            if self.in_bounds(nx, ny) and not cell.is_cell_42:
                 neighbor = self.grid[nx][ny]
                 if not neighbor.is_visited:
                     self.frontier.add(neighbor)
@@ -53,23 +53,24 @@ class Maze:
             cell_b.walls['E'] = False
 
     def mark_42_cell(self):
-        mid_h = int(self.height/2)
-        mid_w = int(self.width/2)
+        mid_h = self.height // 2
+        mid_w = self.width // 2
 
         for dx, dy in CELLS_42_offset:
-            cell = self.grid[mid_h+dx-1][mid_w+dy-1]
-            # print(f"{cell.x}, {cell.y}")
-            # cell.is_visited = True
-            cell.walls = {'N': False, 'S': False, 'E': False, 'W': False}
-            self.is_cell_42 = True
+            nx = mid_h + dx
+            ny = mid_w + dy
 
+            if self.in_bounds(nx, ny):
+                cell = self.grid[nx][ny]
+                cell.is_visited = True
+                cell.is_cell_42 = True
 
     def generate(self, start_x=0, start_y=0):
-        random.seed(42)
+        # random.seed(42)
+        self.mark_42_cell()
         start = self.grid[start_x][start_y]
         start.is_visited = True
         self.add_frontier(start)
-        self.mark_42_cell()
         while self.frontier:
             cell_b = random.choice(tuple(self.frontier))
             self.frontier.remove(cell_b)
