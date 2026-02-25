@@ -1,6 +1,5 @@
 import random
-from core.Cell import Cell
-
+from Cell import Cell
 
 DIRS = {
     'N': (0, -1),
@@ -11,10 +10,10 @@ DIRS = {
 
 CELLS_42_offset = [
     (0, -1), (0, -2), (0, -3), (0, 1), (0, 2), (0, 3),
-    (1, 3), (1, -3),
-    (2, -3), (2, 1), (2, 2), (2, 3),
-    (-1, -1), (-1, 1),
-    (-2, -1), (-2, 1), (-2, 2), (-2, 3)
+    (-1, 3), (-1, -3),
+    (-2, -3), (-2, 1), (-2, 2), (-2, 3),
+    (1, -1), (1, 1),
+    (2, -1), (2, 1), (2, 2), (2, 3)
 ]
 
 class PrimeGenerator:
@@ -27,18 +26,42 @@ class PrimeGenerator:
     def in_bounds(self, x, y):
         return 0 <= x < self.height and 0 <= y < self.width
 
+    # -------------------------
+    # MARK 42 BEFORE GENERATION
+    # -------------------------
+    def mark_42_cell(self):
+        mid_h = self.height // 2
+        mid_w = self.width // 2
+
+        for dx, dy in CELLS_42_offset:
+            nx = mid_h + dx
+            ny = mid_w + dy
+
+            if self.in_bounds(nx, ny):
+                cell = self.grid[nx][ny]
+                cell.is_cell_42 = True
+                cell.is_visited = True  # block Prim from entering
+
+    # -------------------------
+    # ADD FRONTIER (skip 42)
+    # -------------------------
     def add_frontier(self, cell):
-        x, y = cell.x, cell.y
-        for dir, (dx, dy) in DIRS.items():
-            nx, ny = x + dx, y + dy
-            if self.in_bounds(nx, ny) and not cell.is_cell_42:
+        for dx, dy in DIRS.values():
+            nx, ny = cell.x + dx, cell.y + dy
+
+            if self.in_bounds(nx, ny):
                 neighbor = self.grid[nx][ny]
-                if not neighbor.is_visited:
+
+                if not neighbor.is_visited and not neighbor.is_cell_42:
                     self.frontier.add(neighbor)
 
+    # -------------------------
+    # REMOVE WALL BETWEEN CELLS
+    # -------------------------
     def remove_wall_between(self, cell_a, cell_b):
         dx = cell_b.x - cell_a.x
         dy = cell_b.y - cell_a.y
+
         if dx == 1:
             cell_a.walls['S'] = False
             cell_b.walls['N'] = False
@@ -52,35 +75,34 @@ class PrimeGenerator:
             cell_a.walls['W'] = False
             cell_b.walls['E'] = False
 
-    def mark_42_cell(self):
-        mid_h = self.height // 2
-        mid_w = self.width // 2
-
-        for dx, dy in CELLS_42_offset:
-            nx = mid_h + dx
-            ny = mid_w + dy
-
-            if self.in_bounds(nx, ny):
-                cell = self.grid[nx][ny]
-                cell.is_visited = True
-                cell.is_cell_42 = True
-
+    # -------------------------
+    # GENERATE MAZE
+    # -------------------------
     def generate(self, start_x=0, start_y=0):
-        # random.seed(42)
         self.mark_42_cell()
+
+        # make sure start is not inside 42
+        while self.grid[start_x][start_y].is_cell_42:
+            start_x = random.randint(0, self.height - 1)
+            start_y = random.randint(0, self.width - 1)
+
         start = self.grid[start_x][start_y]
         start.is_visited = True
         self.add_frontier(start)
+
         while self.frontier:
             cell_b = random.choice(tuple(self.frontier))
             self.frontier.remove(cell_b)
 
             visited_neighbors = []
-            for dir, (dx, dy) in DIRS.items():
+
+            for dx, dy in DIRS.values():
                 nx, ny = cell_b.x + dx, cell_b.y + dy
+
                 if self.in_bounds(nx, ny):
                     neighbor = self.grid[nx][ny]
-                    if neighbor.is_visited:
+
+                    if neighbor.is_visited and not neighbor.is_cell_42:
                         visited_neighbors.append(neighbor)
 
             if visited_neighbors:

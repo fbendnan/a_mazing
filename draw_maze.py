@@ -1,9 +1,9 @@
 import curses
-from algos.Prim_algo import PrimeGenerator
+from Prim_algo import PrimeGenerator
 
 ###########
-MAZE_WIDTH = 25
-MAZE_HEIGHT = 20
+MAZE_WIDTH = 10
+MAZE_HEIGHT = 10
 
 
 WALL = '█'
@@ -34,15 +34,39 @@ class MazeDrawing:
                 if not cell.walls['N']:
                     for j in range(CELL_W):
                         self.maze_canvas[row_pos - 1][col_pos + j] = ' '
+
                 if not cell.walls['S']:
                     for j in range(CELL_W):
                         self.maze_canvas[row_pos + CELL_H][col_pos + j] = ' '
+
                 if not cell.walls['W']:
                     for i in range(CELL_H):
                         self.maze_canvas[row_pos + i][col_pos - 1] = ' '
+
                 if not cell.walls['E']:
                     for i in range(CELL_H):
                         self.maze_canvas[row_pos + i][col_pos + CELL_W] = ' '
+
+
+    def colorate_42_cells(self, stdscr):
+        curses.init_pair(2, curses.COLOR_RED, -1)
+
+        for x in range(MAZE_HEIGHT):
+            for y in range(MAZE_WIDTH):
+                cell = self.maze.grid[x][y]
+
+                if cell.is_cell_42:
+                    row_pos = x * (CELL_H + 1) + 1
+                    col_pos = y * (CELL_W + 1) + 1
+
+                    for i in range(CELL_H):
+                        for j in range(CELL_W):
+                            stdscr.addstr(
+                                row_pos + i,
+                                col_pos + j,
+                                " ",
+                                curses.color_pair(2) | curses.A_REVERSE
+                            )
 
 
     def print_choices(self, stdscr):
@@ -70,11 +94,13 @@ class MazeDrawing:
         self.scr_height, self.scr_width = stdscr.getmaxyx()
         if self.scr_height > self.canvas_height + 6 and self.scr_width > self.canvas_width:
             curses.curs_set(0)
-            # stdscr.keypad(True)
-            self.maze.generate(2,4)
-            self.build_maze_canvas()
             curses.start_color()
             curses.use_default_colors()
+            # stdscr.keypad(True)
+
+            self.maze.generate(1,0)
+            self.build_maze_canvas()
+
             curses.init_pair(1, curses.COLOR_CYAN, -1)
             for row_idx, row in enumerate(self.maze_canvas):
                 for col_idx, char in enumerate(row):
@@ -84,7 +110,8 @@ class MazeDrawing:
                         stdscr.addstr(row_idx, col_idx, char)
 
             #############
-            self.put_entry_and_exit(stdscr, (2,2), (6,7))
+            self.put_entry_and_exit(stdscr, (1,1), (9, 9))
+            self.colorate_42_cells(stdscr)
             self.print_choices(stdscr)
             stdscr.refresh()
             while True:
