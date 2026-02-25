@@ -1,3 +1,5 @@
+from typing import Dict
+
 def mandatory_exist(configuration: dict):
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
     for m in mandatory:
@@ -6,10 +8,10 @@ def mandatory_exist(configuration: dict):
     return True
 
 
-def parsser():
-    configuration = {}
+def parsser(config_file: str) -> Dict:
+    configuration: Dict= {}
     try:
-        with open('config.txt', 'r') as configuratin_file:
+        with open(config_file, 'r') as configuratin_file:
             for line in configuratin_file:
                 line = line.strip()
                 if not line or line.startswith('#'):
@@ -53,12 +55,12 @@ def parsser():
                         configuration[to_check] = True
                     elif line_s[1].strip().upper() == 'FALSE':
                         configuration[to_check] = False
-                elif to_check == 'OUTPUT_FILE':
+                elif to_check == 'OUTPUT_FILE' or to_check == 'ALGO':
                     if to_check in configuration:
                         raise ValueError(
                             "you shouldn't duplicate a parametter"
                             )
-                    configuration[to_check] = line_s[1].strip('\n')
+                    configuration[to_check] = str(line_s[1].strip('\n'))
                 else:
                     raise ValueError(
                         "you enter a parameter does't needed...!"
@@ -91,5 +93,3 @@ def parsser():
         return configuration
     except Exception as e:
         print(f"Error: {e}")
-
-parsser()

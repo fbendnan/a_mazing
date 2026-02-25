@@ -1,9 +1,9 @@
 import curses
-from gen_maze import Maze
+from algos.Prim_algo import PrimeGenerator
 
 ###########
-MAZE_WIDTH = 15
-MAZE_HEIGHT = 10
+MAZE_WIDTH = 25
+MAZE_HEIGHT = 20
 
 
 WALL = '█'
@@ -15,7 +15,7 @@ class MazeDrawing:
         self.canvas_height = MAZE_HEIGHT * (CELL_H + 1) + 1
         self.canvas_width = MAZE_WIDTH * (CELL_W + 1) + 1
         self.maze_canvas = [[WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)]
-        self.maze = Maze(MAZE_HEIGHT, MAZE_WIDTH)
+        self.maze = PrimeGenerator(MAZE_HEIGHT, MAZE_WIDTH)
         self.scr_height = 0
         self.scr_width = 0
         

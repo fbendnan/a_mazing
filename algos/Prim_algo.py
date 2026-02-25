@@ -1,5 +1,5 @@
 import random
-from Cell import Cell
+from core.Cell import Cell
 
 
 DIRS = {
@@ -17,7 +17,7 @@ CELLS_42_offset = [
     (-2, -1), (-2, 1), (-2, 2), (-2, 3)
 ]
 
-class Maze:
+class PrimeGenerator:
     def __init__(self, height, width):
         self.height = height
         self.width = width
@@ -89,7 +89,3 @@ class Maze:
 
             cell_b.is_visited = True
             self.add_frontier(cell_b)
-        
-
-# maze = Maze(height=5, width=9)
-# maze.generate(start_x=0, start_y=0)

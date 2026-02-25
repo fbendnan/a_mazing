@@ -6,3 +6,4 @@ ENTRY=0,0
 OUTPUT_FILE=maze.txt
 PERFECT=False
 SEED=9
+ALGO=prim
