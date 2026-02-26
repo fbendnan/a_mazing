@@ -4,12 +4,12 @@ import random
 
 
 def regenerate_maze(configuration):
-    maze = PrimeGenerator(configuration)
+    new_maze = PrimeGenerator(configuration)
     from draw_maze import MazeDrawing
 
-    # draw = MazeDrawing(maze)
-    draw_maze = MazeDrawing(maze)
-    curses.wrapper(draw_maze.main)
+    draw_maze = MazeDrawing(new_maze)
+    return new_maze
+    # curses.wrapper(draw_maze.main)
 
 
 def rotate_maze_color(stdscr, maze_canvas, WALL):

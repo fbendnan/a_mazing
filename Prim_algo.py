@@ -1,6 +1,6 @@
 import random
 from Cell import Cell
-from typing import Dict
+from typing import Dict, Set
 
 DIRS = {
     'N': (0, -1),
@@ -25,14 +25,11 @@ class PrimeGenerator:
         self.entry = configuration["ENTRY"]
         self.exit = configuration["EXIT"]
         self.grid = [[Cell(row, col) for col in range(configuration["WIDTH"])] for row in range(configuration["HEIGHT"])]
-        self.frontier = set()
+        self.frontier: Set = set()
 
     def in_bounds(self, row, col):
         return 0 <= row < self.height and 0 <= col < self.width
 
-    # -------------------------
-    # MARK 42 BEFORE GENERATION
-    # -------------------------
     def mark_42_cell(self):
         mid_h = self.height // 2
         mid_w = self.width // 2
@@ -46,9 +43,7 @@ class PrimeGenerator:
                 cell.is_cell_42 = True
                 cell.is_visited = True  # block Prim from entering
 
-    # -------------------------
-    # ADD FRONTIER (skip 42)
-    # -------------------------
+
     def add_frontier(self, cell):
         for dx, dy in DIRS.values():
             nx, ny = cell.x + dx, cell.y + dy
@@ -59,9 +54,7 @@ class PrimeGenerator:
                 if not neighbor.is_visited and not neighbor.is_cell_42:
                     self.frontier.add(neighbor)
 
-    # -------------------------
-    # REMOVE WALL BETWEEN CELLS
-    # -------------------------
+
     def remove_wall_between(self, cell_a, cell_b):
         dx = cell_b.x - cell_a.x
         dy = cell_b.y - cell_a.y

@@ -1,6 +1,6 @@
 import curses
 
-# from Prim_algo import PrimeGenerator
+from Prim_algo import PrimeGenerator
 from keys_fun import regenerate_maze, rotate_maze_color
 
 ###########
@@ -14,14 +14,15 @@ class MazeDrawing:
     def __init__(self, maze):
         self.canvas_height = maze.height * (CELL_H + 1) + 1
         self.canvas_width = maze.width * (CELL_W + 1) + 1
-        self.maze_canvas = [
-            [WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)
-        ]
+        self.maze_canvas = None
         self.maze = maze
         self.scr_height = 0
         self.scr_width = 0
 
     def build_maze_canvas(self):
+        self.maze_canvas = [
+            [WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)
+        ]
         for x in range(self.maze.height):
             for y in range(self.maze.width):
                 cell = self.maze.grid[x][y]
@@ -97,53 +98,70 @@ class MazeDrawing:
                 else:
                     stdscr.addstr(row_idx, col_idx, char)
 
+    def draw(self, stdscr):
+        self.build_maze_canvas()
+        self.colorate_maze(stdscr)
+        #############
+        self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
+        self.colorate_42_cells(stdscr)
+        self.print_choices(stdscr)
+        stdscr.refresh()
+
     def main(self, stdscr):
-        self.scr_height, self.scr_width = stdscr.getmaxyx()
-        if (
-            self.scr_height > self.canvas_height + 6
-            and self.scr_width > self.canvas_width
-        ):
-            curses.curs_set(1)
+        
+            curses.curs_set(0)
             curses.start_color()
             curses.use_default_colors()
-            # stdscr.keypad(True)
+            stdscr.keypad(True)
 
             self.maze.generate(1, 0)
-            self.build_maze_canvas()
-            self.colorate_maze(stdscr)
-            #############
-            self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
-            self.colorate_42_cells(stdscr)
-            self.print_choices(stdscr)
-            stdscr.refresh()
+            self.draw(stdscr)
             while True:
-                key = stdscr.getch()
-                if key == ord("1"):
-                    regenerate_maze(self.maze.configuration)
-                elif key == ord("2"):
-                    ...
-                elif key == ord("3"):
-                    rotate_maze_color(stdscr, self.maze_canvas, WALL)
-                    self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
-                    self.colorate_42_cells(stdscr)
-                    self.print_choices(stdscr)
-                    stdscr.refresh()
-                elif key == ord("4"):
-                    break
-                # elif key == curses.KEY_LEFT:
+                self.scr_height, self.scr_width = stdscr.getmaxyx()
+                if (
+                    self.scr_height < self.canvas_height + 6
+                    or self.scr_width < self.canvas_width
+                ):
+                
+                    key = stdscr.getch()
+                    if key == ord("1"):
+                        stdscr.clear()
+                        self.maze = PrimeGenerator(self.maze.configuration)
+                        self.maze.generate(1, 0)
+                        self.draw(stdscr)
+                    elif key == ord("2"):
+                        ...
+                    elif key == ord("3"):
+                        stdscr.clear()
+                        rotate_maze_color(stdscr, self.maze_canvas, WALL)
+                        self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
+                        self.colorate_42_cells(stdscr)
+                        self.print_choices(stdscr)
+                        stdscr.refresh()
+                    elif key == ord("4"):
+                        break
+                    elif key == curses.KEY_RESIZE:
+                        while True:
+                            self.scr_height, self.scr_width = stdscr.getmaxyx()
 
-        else:
-            stdscr.clear()
-            stdscr.addstr(
-                self.scr_height // 2,
-                self.scr_width // 2 - 16,
-                "Size of terminale is too short",
-            )
-            stdscr.addstr(
-                self.scr_height // 2 + 1, self.scr_width // 2 - 10, "resize it please"
-            )
-            stdscr.refresh()
-            stdscr.getch()
+                            if (
+                                self.scr_height >= self.canvas_height + 6
+                                and self.scr_width >= self.canvas_width
+                            ):
+                                break
 
+                            stdscr.clear()
+                            stdscr.addstr(
+                                self.scr_height // 2,
+                                self.scr_width // 2 - 16,
+                                "Terminal too small!",
+                            )
+                            stdscr.addstr(
+                                self.scr_height // 2 + 1,
+                                self.scr_width // 2 - 10,
+                                "Resize it please",
+                            )
+                            stdscr.refresh()
 
-# if __name__ == "__main__":
+                stdscr.clear()
+

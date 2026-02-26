@@ -16,4 +16,8 @@ maze = PrimeGenerator(configuration)
 
 draw = MazeDrawing(maze)
 draw_maze = MazeDrawing(maze)
-curses.wrapper(draw_maze.main)
+try:
+    curses.wrapper(draw_maze.main)
+except KeyboardInterrupt as e:
+    print("Error: Wrapper is out")
+
