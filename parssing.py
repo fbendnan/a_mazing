@@ -1,6 +1,6 @@
 from typing import Dict
 
-def mandatory_exist(configuration: dict):
+def mandatory_exist(configuration: Dict):
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
     for m in mandatory:
         if m not in configuration:
@@ -77,19 +77,30 @@ def parsser(config_file: str) -> Dict:
             exit = configuration['EXIT']
             width = configuration['WIDTH']
             height = configuration['HEIGHT']
-            proba1: bool = (entry[0] < width and entry[1] == 0) \
-                and (exit[0] < width and exit[1] == height - 1)
-            proba2: bool = (entry[0] < width and entry[1] == height - 1) \
-                and (exit[0] < width and exit[1] == 0)
-            proba3: bool = (entry[0] == 0 and entry[1] < height) \
-                and (exit[0] == width - 1 and exit[1] < height)
-            proba4: bool = (entry[0] == width - 1 and entry[1] < height) \
-                and (exit[0] == 0 and exit[1] < height)
-            
-            if proba1 is False and proba2 is False and proba3 is False \
-               and proba4 is False:
+            if not (entry[1] >= 0 and entry[1] < width):
                 raise ValueError("The entry and Exit are invalid "
                                  "for this maze")
+            elif not (exit[1] >= 0 and exit[1] < width):
+                raise ValueError("The entry and Exit are invalid "
+                                 "for this maze")
+            elif not (entry[0] >= 0 and entry[0] < height):
+                raise ValueError("The entry and Exit are invalid "
+                                 "for this maze")
+            elif not (exit[0] >= 0 and exit[0] < height):
+                raise ValueError("The entry and Exit are invalid "
+                                 "for this maze")
+            # proba1: bool = (entry[0] < width and entry[1] == 0) \
+            #     and (exit[0] < width and exit[1] == height - 1)
+            # proba2: bool = (entry[0] < width and entry[1] == height - 1) \
+            #     and (exit[0] < width and exit[1] == 0)
+            # proba3: bool = (entry[0] == 0 and entry[1] < height) \
+            #     and (exit[0] == width - 1 and exit[1] < height)
+            # proba4: bool = (entry[0] == width - 1 and entry[1] < height) \
+            #     and (exit[0] == 0 and exit[1] < height)
+            
+            # if proba1 is False and proba2 is False and proba3 is False \
+            #    and proba4 is False:
+                
         return configuration
     except Exception as e:
         print(f"Error: {e}")

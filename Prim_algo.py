@@ -1,5 +1,6 @@
 import random
 from Cell import Cell
+from typing import Dict
 
 DIRS = {
     'N': (0, -1),
@@ -17,14 +18,17 @@ CELLS_42_offset = [
 ]
 
 class PrimeGenerator:
-    def __init__(self, height, width):
-        self.height = height
-        self.width = width
-        self.grid = [[Cell(x, y) for y in range(width)] for x in range(height)]
+    def __init__(self, configuration: Dict):
+        self.configuration = configuration
+        self.height = configuration["HEIGHT"]
+        self.width = configuration["WIDTH"]
+        self.entry = configuration["ENTRY"]
+        self.exit = configuration["EXIT"]
+        self.grid = [[Cell(row, col) for col in range(configuration["WIDTH"])] for row in range(configuration["HEIGHT"])]
         self.frontier = set()
 
-    def in_bounds(self, x, y):
-        return 0 <= x < self.height and 0 <= y < self.width
+    def in_bounds(self, row, col):
+        return 0 <= row < self.height and 0 <= col < self.width
 
     # -------------------------
     # MARK 42 BEFORE GENERATION
@@ -75,16 +79,9 @@ class PrimeGenerator:
             cell_a.walls['W'] = False
             cell_b.walls['E'] = False
 
-    # -------------------------
-    # GENERATE MAZE
-    # -------------------------
+
     def generate(self, start_x=0, start_y=0):
         self.mark_42_cell()
-
-        # make sure start is not inside 42
-        while self.grid[start_x][start_y].is_cell_42:
-            start_x = random.randint(0, self.height - 1)
-            start_y = random.randint(0, self.width - 1)
 
         start = self.grid[start_x][start_y]
         start.is_visited = True

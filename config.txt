@@ -1,7 +1,7 @@
-           width   =                  10
+           width   =                  20
 
 HEIGHT           =10
-Exit = 1,9
+Exit = 9,19
 ENTRY=0,0
 OUTPUT_FILE=maze.txt
 PERFECT=False

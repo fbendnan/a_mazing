@@ -1,27 +1,29 @@
 import curses
-from Prim_algo import PrimeGenerator
+
+# from Prim_algo import PrimeGenerator
+from keys_fun import regenerate_maze, rotate_maze_color
 
 ###########
-MAZE_WIDTH = 10
-MAZE_HEIGHT = 10
 
-
-WALL = '█'
+WALL = "█"
 CELL_W = 2
 CELL_H = 1
 
+
 class MazeDrawing:
-    def __init__(self):
-        self.canvas_height = MAZE_HEIGHT * (CELL_H + 1) + 1
-        self.canvas_width = MAZE_WIDTH * (CELL_W + 1) + 1
-        self.maze_canvas = [[WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)]
-        self.maze = PrimeGenerator(MAZE_HEIGHT, MAZE_WIDTH)
+    def __init__(self, maze):
+        self.canvas_height = maze.height * (CELL_H + 1) + 1
+        self.canvas_width = maze.width * (CELL_W + 1) + 1
+        self.maze_canvas = [
+            [WALL for _ in range(self.canvas_width)] for _ in range(self.canvas_height)
+        ]
+        self.maze = maze
         self.scr_height = 0
         self.scr_width = 0
-        
+
     def build_maze_canvas(self):
-        for x in range(MAZE_HEIGHT):
-            for y in range(MAZE_WIDTH):
+        for x in range(self.maze.height):
+            for y in range(self.maze.width):
                 cell = self.maze.grid[x][y]
 
                 row_pos = x * (CELL_H + 1) + 1
@@ -29,30 +31,29 @@ class MazeDrawing:
 
                 for i in range(CELL_H):
                     for j in range(CELL_W):
-                        self.maze_canvas[row_pos + i][col_pos + j] = ' '
+                        self.maze_canvas[row_pos + i][col_pos + j] = " "
 
-                if not cell.walls['N']:
+                if not cell.walls["N"]:
                     for j in range(CELL_W):
-                        self.maze_canvas[row_pos - 1][col_pos + j] = ' '
+                        self.maze_canvas[row_pos - 1][col_pos + j] = " "
 
-                if not cell.walls['S']:
+                if not cell.walls["S"]:
                     for j in range(CELL_W):
-                        self.maze_canvas[row_pos + CELL_H][col_pos + j] = ' '
+                        self.maze_canvas[row_pos + CELL_H][col_pos + j] = " "
 
-                if not cell.walls['W']:
+                if not cell.walls["W"]:
                     for i in range(CELL_H):
-                        self.maze_canvas[row_pos + i][col_pos - 1] = ' '
+                        self.maze_canvas[row_pos + i][col_pos - 1] = " "
 
-                if not cell.walls['E']:
+                if not cell.walls["E"]:
                     for i in range(CELL_H):
-                        self.maze_canvas[row_pos + i][col_pos + CELL_W] = ' '
-
+                        self.maze_canvas[row_pos + i][col_pos + CELL_W] = " "
 
     def colorate_42_cells(self, stdscr):
-        curses.init_pair(2, curses.COLOR_RED, -1)
+        curses.init_pair(2, curses.COLOR_WHITE, -1)
 
-        for x in range(MAZE_HEIGHT):
-            for y in range(MAZE_WIDTH):
+        for x in range(self.maze.height):
+            for y in range(self.maze.width):
                 cell = self.maze.grid[x][y]
 
                 if cell.is_cell_42:
@@ -65,9 +66,8 @@ class MazeDrawing:
                                 row_pos + i,
                                 col_pos + j,
                                 " ",
-                                curses.color_pair(2) | curses.A_REVERSE
+                                curses.color_pair(2) | curses.A_REVERSE,
                             )
-
 
     def print_choices(self, stdscr):
         stdscr.addstr(self.canvas_height, 1, "===A-Maze-ing===")
@@ -77,8 +77,7 @@ class MazeDrawing:
         stdscr.addstr(self.canvas_height + 4, 1, "4. Quit")
         stdscr.addstr(self.canvas_height + 5, 2, "choice? (1-4):")
 
-
-    def put_entry_and_exit(self,stdscr, entry, exit):
+    def put_entry_and_exit(self, stdscr, entry, exit):
         x, y = entry
         i, j = exit
         row_pos_entry = x * (CELL_H + 1) + 1
@@ -89,50 +88,62 @@ class MazeDrawing:
         stdscr.addstr(row_pos_entry, col_pos_entry, "🐈")
         stdscr.addstr(row_pos_exit, col_pos_exit, "🧀")
 
+    def colorate_maze(self, stdscr):
+        curses.init_pair(1, curses.COLOR_BLUE, -1)
+        for row_idx, row in enumerate(self.maze_canvas):
+            for col_idx, char in enumerate(row):
+                if char == WALL:
+                    stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
+                else:
+                    stdscr.addstr(row_idx, col_idx, char)
 
-    def draw(self, stdscr):
+    def main(self, stdscr):
         self.scr_height, self.scr_width = stdscr.getmaxyx()
-        if self.scr_height > self.canvas_height + 6 and self.scr_width > self.canvas_width:
-            curses.curs_set(0)
+        if (
+            self.scr_height > self.canvas_height + 6
+            and self.scr_width > self.canvas_width
+        ):
+            curses.curs_set(1)
             curses.start_color()
             curses.use_default_colors()
             # stdscr.keypad(True)
 
-            self.maze.generate(1,0)
+            self.maze.generate(1, 0)
             self.build_maze_canvas()
-
-            curses.init_pair(1, curses.COLOR_CYAN, -1)
-            for row_idx, row in enumerate(self.maze_canvas):
-                for col_idx, char in enumerate(row):
-                    if char == WALL:
-                        stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
-                    else:
-                        stdscr.addstr(row_idx, col_idx, char)
-
+            self.colorate_maze(stdscr)
             #############
-            self.put_entry_and_exit(stdscr, (1,1), (9, 9))
+            self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
             self.colorate_42_cells(stdscr)
             self.print_choices(stdscr)
             stdscr.refresh()
             while True:
                 key = stdscr.getch()
-                if key == ord('1'):
+                if key == ord("1"):
+                    regenerate_maze(self.maze.configuration)
+                elif key == ord("2"):
                     ...
-                elif key == ord('2'):
-                    ...
-                elif key == ord('3'):
-                    ...
-                elif key == ord('4'):
+                elif key == ord("3"):
+                    rotate_maze_color(stdscr, self.maze_canvas, WALL)
+                    self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
+                    self.colorate_42_cells(stdscr)
+                    self.print_choices(stdscr)
+                    stdscr.refresh()
+                elif key == ord("4"):
                     break
+                # elif key == curses.KEY_LEFT:
+
         else:
             stdscr.clear()
-            stdscr.addstr(self.scr_height//2, self.scr_width//2 - 16, "Size of terminale is too short")
-            stdscr.addstr(self.scr_height//2 + 1, self.scr_width//2 - 10, "resize it please")
+            stdscr.addstr(
+                self.scr_height // 2,
+                self.scr_width // 2 - 16,
+                "Size of terminale is too short",
+            )
+            stdscr.addstr(
+                self.scr_height // 2 + 1, self.scr_width // 2 - 10, "resize it please"
+            )
             stdscr.refresh()
             stdscr.getch()
 
-            
 
-if __name__ == "__main__":
-    d = MazeDrawing()
-    curses.wrapper(d.draw)
+# if __name__ == "__main__":
