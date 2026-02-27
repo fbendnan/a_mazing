@@ -1,8 +1,8 @@
-width = 20
-HEIGHT=10
-Exit = 9,19
+width = 9
+HEIGHT=7
+Exit = 6,8
 ENTRY=0,0
 OUTPUT_FILE=maze.txt
-PERFECT=False
-SEED=9
+PERFECT=True
+SEED=27
 ALGO=prim

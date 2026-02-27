@@ -1,14 +1,10 @@
 import curses
-
+import random
 from Prim_algo import PrimeGenerator
-from keys_fun import regenerate_maze, rotate_maze_color
-
-###########
 
 WALL = "█"
 CELL_W = 2
 CELL_H = 1
-
 
 class MazeDrawing:
     def __init__(self, maze):
@@ -18,6 +14,7 @@ class MazeDrawing:
         self.maze = maze
         self.scr_height = 0
         self.scr_width = 0
+
 
     def build_maze_canvas(self):
         self.maze_canvas = [
@@ -52,7 +49,6 @@ class MazeDrawing:
 
     def colorate_42_cells(self, stdscr):
         curses.init_pair(2, curses.COLOR_WHITE, -1)
-
         for x in range(self.maze.height):
             for y in range(self.maze.width):
                 cell = self.maze.grid[x][y]
@@ -89,18 +85,28 @@ class MazeDrawing:
         stdscr.addstr(row_pos_entry, col_pos_entry, "🐈")
         stdscr.addstr(row_pos_exit, col_pos_exit, "🧀")
 
-    def colorate_maze(self, stdscr):
-        curses.init_pair(1, curses.COLOR_BLUE, -1)
+    def colorate_maze(self, stdscr, maze_color = 1):
+        colors = [
+        curses.init_pair(1, curses.COLOR_BLUE, -1),
+        curses.init_pair(2, curses.COLOR_GREEN, -1),
+        curses.init_pair(3, curses.COLOR_MAGENTA, -1),
+        curses.init_pair(4, curses.COLOR_RED, -1),
+        curses.init_pair(5, curses.COLOR_YELLOW, -1),
+        curses.init_pair(6, curses.COLOR_WHITE, -1),
+        curses.init_pair(7, curses.COLOR_BLACK, -1),
+        curses.init_pair(8, curses.COLOR_CYAN, -1)
+        ]
+        
         for row_idx, row in enumerate(self.maze_canvas):
             for col_idx, char in enumerate(row):
                 if char == WALL:
-                    stdscr.addstr(row_idx, col_idx, char, curses.color_pair(1))
+                    stdscr.addstr(row_idx, col_idx, char, curses.color_pair(maze_color))
                 else:
                     stdscr.addstr(row_idx, col_idx, char)
 
-    def draw(self, stdscr):
+    def draw(self, stdscr, maze_color):
         self.build_maze_canvas()
-        self.colorate_maze(stdscr)
+        self.colorate_maze(stdscr, maze_color)
         #############
         self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
         self.colorate_42_cells(stdscr)
@@ -108,60 +114,55 @@ class MazeDrawing:
         stdscr.refresh()
 
     def main(self, stdscr):
-        
-            curses.curs_set(0)
-            curses.start_color()
-            curses.use_default_colors()
-            stdscr.keypad(True)
 
-            self.maze.generate(1, 0)
-            self.draw(stdscr)
-            while True:
-                self.scr_height, self.scr_width = stdscr.getmaxyx()
-                if (
-                    self.scr_height < self.canvas_height + 6
-                    or self.scr_width < self.canvas_width
-                ):
-                
-                    key = stdscr.getch()
-                    if key == ord("1"):
-                        stdscr.clear()
-                        self.maze = PrimeGenerator(self.maze.configuration)
-                        self.maze.generate(1, 0)
-                        self.draw(stdscr)
-                    elif key == ord("2"):
-                        ...
-                    elif key == ord("3"):
-                        stdscr.clear()
-                        rotate_maze_color(stdscr, self.maze_canvas, WALL)
-                        self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
-                        self.colorate_42_cells(stdscr)
-                        self.print_choices(stdscr)
-                        stdscr.refresh()
-                    elif key == ord("4"):
-                        break
-                    elif key == curses.KEY_RESIZE:
-                        while True:
-                            self.scr_height, self.scr_width = stdscr.getmaxyx()
+        curses.curs_set(0)
+        curses.start_color()
+        curses.use_default_colors()
+        stdscr.keypad(True)
 
-                            if (
-                                self.scr_height >= self.canvas_height + 6
-                                and self.scr_width >= self.canvas_width
-                            ):
-                                break
+        self.maze.generate(1, 0)
+        color = 1
 
-                            stdscr.clear()
-                            stdscr.addstr(
-                                self.scr_height // 2,
-                                self.scr_width // 2 - 16,
-                                "Terminal too small!",
-                            )
-                            stdscr.addstr(
-                                self.scr_height // 2 + 1,
-                                self.scr_width // 2 - 10,
-                                "Resize it please",
-                            )
-                            stdscr.refresh()
+        while True:
 
+            self.scr_height, self.scr_width = stdscr.getmaxyx()
+
+            if (
+                self.scr_height < self.canvas_height + 6
+                or self.scr_width < self.canvas_width
+            ):
                 stdscr.clear()
+                stdscr.addstr(
+                    self.scr_height // 2,
+                    max(0, self.scr_width // 2 - 10),
+                    "Terminal too small!",
+                )
+                stdscr.addstr(
+                    self.scr_height // 2 + 1,
+                    max(0, self.scr_width // 2 - 8),
+                    "Resize please",
+                )
+                stdscr.refresh()
+                stdscr.getch()
+                continue   
+            stdscr.clear()
+            self.draw(stdscr, color)
+            key = stdscr.getch()
 
+            if key == ord("1"):
+                if self.maze.seed is not None:
+                    self.maze.configuration["SEED"] = None
+                self.maze = PrimeGenerator(self.maze.configuration)
+                self.maze.generate(1, 0)
+
+            elif key == ord("2"):
+                pass
+
+            elif key == ord("3"):
+                color = random.randint(1, 8)
+
+            elif key == ord("4"):
+                break
+
+            elif key == curses.KEY_RESIZE:
+                continue

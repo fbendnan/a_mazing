@@ -1,4 +1,19 @@
-from typing import Dict
+from typing import Dict, Any
+
+H_42 = 5
+W_42 = 7
+
+
+#entry and exit must be outside 42 cells
+CELLs_42 = []
+
+CELLS_42_offset = [
+    (0, -1), (0, -2), (0, -3), (0, 1), (0, 2), (0, 3),
+    (-1, 3), (-1, -3),
+    (-2, -3), (-2, 1), (-2, 2), (-2, 3),
+    (1, -1), (1, 1),
+    (2, -1), (2, 1), (2, 2), (2, 3)
+]
 
 def mandatory_exist(configuration: Dict):
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
@@ -7,8 +22,7 @@ def mandatory_exist(configuration: Dict):
             return False
     return True
 
-
-def parsser(config_file: str) -> Dict:
+def parsser(config_file: str) -> Any:
     configuration: Dict= {}
     with open(config_file, 'r') as configuratin_file:
         for line in configuratin_file:
@@ -29,8 +43,11 @@ def parsser(config_file: str) -> Dict:
                         "you shouldn't duplicate a parametter"
                         )
                 else:
-                    value = line_s[1].strip('\n')
-                    configuration[to_check] = int(value)
+                    try:
+                        value = line_s[1].strip('\n')
+                        configuration[to_check] = int(value)
+                    except ValueError:
+                        raise ValueError("Error: invalid data check HEIGHT, WIDTH and SEED configuration")
             elif to_check == 'ENTRY' or to_check == 'EXIT':
                 if to_check in configuration:
                     raise ValueError(
@@ -38,9 +55,12 @@ def parsser(config_file: str) -> Dict:
                         )
                 coord = line_s[1].split(',')
                 if len(coord) == 2:
-                    configuration[to_check] = (
-                        int(coord[0]), int(coord[1])
-                        )
+                    try:
+                        configuration[to_check] = (
+                            int(coord[0]), int(coord[1])
+                            )
+                    except ValueError:
+                        raise ValueError("make sure the ENTRY and EXIT data")
                 else:
                     raise ValueError(
                         "in Entry and Exit you must enter 2 values"
@@ -71,23 +91,21 @@ def parsser(config_file: str) -> Dict:
                 "'WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', "
                 "'OUTPUT_FILE', 'PERFECT'"
                 )
+        if configuration["HEIGHT"] < (H_42 + 2) or configuration["WIDTH"] < (W_42 + 2):
+            raise ValueError("HEIGHT must be (>= 7) and WIDTH must be (>= 9)")
 
         entry = configuration['ENTRY']
         exit = configuration['EXIT']
         width = configuration['WIDTH']
         height = configuration['HEIGHT']
         if not (entry[1] >= 0 and entry[1] < width):
-            raise ValueError("The entry and Exit are invalid "
-                                "for this maze")
+            raise ValueError("The entry and Exit must be inside the maze")
         elif not (exit[1] >= 0 and exit[1] < width):
-            raise ValueError("The entry and Exit are invalid "
-                                "for this maze")
+            raise ValueError("The entry and Exit must be inside the maze")
         elif not (entry[0] >= 0 and entry[0] < height):
-            raise ValueError("The entry and Exit are invalid "
-                                "for this maze")
+            raise ValueError("The entry and Exit must be inside the maze")
         elif not (exit[0] >= 0 and exit[0] < height):
-            raise ValueError("The entry and Exit are invalid "
-                                "for this maze")
+            raise ValueError("The entry and Exit must be inside the maze")
             
     return configuration
 

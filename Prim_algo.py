@@ -16,7 +16,7 @@ CELLS_42_offset = [
     (1, -1), (1, 1),
     (2, -1), (2, 1), (2, 2), (2, 3)
 ]
-
+#add perfect maze and seed 
 class PrimeGenerator:
     def __init__(self, configuration: Dict):
         self.configuration = configuration
@@ -24,8 +24,11 @@ class PrimeGenerator:
         self.width = configuration["WIDTH"]
         self.entry = configuration["ENTRY"]
         self.exit = configuration["EXIT"]
+        self.seed = configuration.get("SEED", None)
+        self.perfect = configuration.get("PERFECT", True)
         self.grid = [[Cell(row, col) for col in range(configuration["WIDTH"])] for row in range(configuration["HEIGHT"])]
         self.frontier: Set = set()
+        
 
     def in_bounds(self, row, col):
         return 0 <= row < self.height and 0 <= col < self.width
@@ -41,7 +44,7 @@ class PrimeGenerator:
             if self.in_bounds(nx, ny):
                 cell = self.grid[nx][ny]
                 cell.is_cell_42 = True
-                cell.is_visited = True  # block Prim from entering
+                cell.is_visited = True
 
 
     def add_frontier(self, cell):
@@ -73,15 +76,42 @@ class PrimeGenerator:
             cell_b.walls['E'] = False
 
 
-    def generate(self, start_x=0, start_y=0):
-        self.mark_42_cell()
+    def add_loops(self, loop_percent):
+        total_cells = self.height * self.width
+        walls_to_remove = int(total_cells * loop_percent)
 
+        for _ in range(walls_to_remove):
+            
+            row = random.randint(0, self.height - 1)
+            col = random.randint(0, self.width - 1)
+            
+            cell = self.grid[row][col]
+            
+            dx, dy = random.choice(list(DIRS.values()))
+            nx, ny = row + dx, col + dy
+
+            if self.in_bounds(nx, ny) and not self.grid[nx][ny].is_cell_42:
+                neighbor = self.grid[nx][ny]
+                self.remove_wall_between(cell, neighbor)
+
+
+    def generate(self, start_x=0, start_y=0):
+        if self.seed is not None:
+            # print("with seed")
+            random.seed(self.seed)
+        # print(self.seed)
+        # print("gjhgjgfh")
+        print(random.random())
+
+        self.mark_42_cell()
         start = self.grid[start_x][start_y]
         start.is_visited = True
         self.add_frontier(start)
 
         while self.frontier:
-            cell_b = random.choice(tuple(self.frontier))
+            # random.seed(27)
+            cell_b = random.choice(sorted(self.frontier, key=lambda c: (c.x, c.y)))
+            print(f"cell_b = ({cell_b.x}, {cell_b.y})")
             self.frontier.remove(cell_b)
 
             visited_neighbors = []
@@ -97,7 +127,11 @@ class PrimeGenerator:
 
             if visited_neighbors:
                 cell_a = random.choice(visited_neighbors)
+                print(f"cell_a = ({cell_a.x}, {cell_a.y})")
                 self.remove_wall_between(cell_a, cell_b)
 
             cell_b.is_visited = True
             self.add_frontier(cell_b)
+        if not self.perfect:
+            self.add_loops(0.1)
+

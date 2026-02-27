@@ -6,18 +6,18 @@ import curses
 
 
 CONFIG_FILE = sys.argv[1]
+try :
 
-configuration = parsser(CONFIG_FILE)
+    configuration = parsser(CONFIG_FILE)
 
-# print(configuration)
+    # print(configuration)
 
-maze = PrimeGenerator(configuration)
+    maze = PrimeGenerator(configuration)
 
 
-draw = MazeDrawing(maze)
-draw_maze = MazeDrawing(maze)
-try:
+    draw = MazeDrawing(maze)
+    draw_maze = MazeDrawing(maze)
     curses.wrapper(draw_maze.main)
-except KeyboardInterrupt as e:
-    print("Error: Wrapper is out")
+except Exception as e:
+    print(e)
 
