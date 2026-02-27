@@ -4,7 +4,8 @@ H_42 = 5
 W_42 = 7
 
 
-#entry and exit must be outside 42 cells
+###### entry and exit must be outside 42 cells
+
 CELLs_42 = []
 
 CELLS_42_offset = [

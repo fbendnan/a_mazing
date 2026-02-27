@@ -14,7 +14,6 @@ try :
 
     maze = PrimeGenerator(configuration)
 
-
     draw = MazeDrawing(maze)
     draw_maze = MazeDrawing(maze)
     curses.wrapper(draw_maze.main)

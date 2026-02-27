@@ -16,7 +16,7 @@ CELLS_42_offset = [
     (1, -1), (1, 1),
     (2, -1), (2, 1), (2, 2), (2, 3)
 ]
-#add perfect maze and seed 
+
 class PrimeGenerator:
     def __init__(self, configuration: Dict):
         self.configuration = configuration
@@ -97,11 +97,8 @@ class PrimeGenerator:
 
     def generate(self, start_x=0, start_y=0):
         if self.seed is not None:
-            # print("with seed")
             random.seed(self.seed)
-        # print(self.seed)
-        # print("gjhgjgfh")
-        print(random.random())
+
 
         self.mark_42_cell()
         start = self.grid[start_x][start_y]
@@ -109,7 +106,6 @@ class PrimeGenerator:
         self.add_frontier(start)
 
         while self.frontier:
-            # random.seed(27)
             cell_b = random.choice(sorted(self.frontier, key=lambda c: (c.x, c.y)))
             print(f"cell_b = ({cell_b.x}, {cell_b.y})")
             self.frontier.remove(cell_b)
@@ -127,7 +123,6 @@ class PrimeGenerator:
 
             if visited_neighbors:
                 cell_a = random.choice(visited_neighbors)
-                print(f"cell_a = ({cell_a.x}, {cell_a.y})")
                 self.remove_wall_between(cell_a, cell_b)
 
             cell_b.is_visited = True

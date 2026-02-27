@@ -3,5 +3,5 @@ class Cell:
         self.x = x
         self.y = y
         self.is_visited = False
-        self.walls = {'N': True, 'S': True, 'E': True, 'W': True}
+        self.walls = {'N': True, 'E': True, 'S': True, 'W': True}
         self.is_cell_42 = False

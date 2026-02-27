@@ -2,6 +2,10 @@ import curses
 import random
 from Prim_algo import PrimeGenerator
 
+### key q if screen is small 
+### change cat to mouse
+#### add the path of the maze and try the algo in my maze
+
 WALL = "█"
 CELL_W = 2
 CELL_H = 1
