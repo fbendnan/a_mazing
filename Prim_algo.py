@@ -1,6 +1,6 @@
 import random
 from Cell import Cell
-from typing import Dict, Set
+from typing import Dict, Set, List
 
 DIRS = {
     'N': (0, -1),
@@ -16,6 +16,8 @@ CELLS_42_offset = [
     (1, -1), (1, 1),
     (2, -1), (2, 1), (2, 2), (2, 3)
 ]
+
+#add generate grid walls for solver 
 
 class PrimeGenerator:
     def __init__(self, configuration: Dict):
@@ -94,6 +96,25 @@ class PrimeGenerator:
                 neighbor = self.grid[nx][ny]
                 self.remove_wall_between(cell, neighbor)
 
+    def generate_grid_walls_for_solver(self) -> List[List[List[int]]]:
+        grid_solver = []
+
+        for row in self.grid:
+            row_data = []
+
+            for cell in row:
+                cell_walls = [
+                    1 if cell.walls['N'] else 0,
+                    1 if cell.walls['E'] else 0,
+                    1 if cell.walls['S'] else 0,
+                    1 if cell.walls['W'] else 0,
+                ]
+                cell.solver_walls = cell_walls
+                row_data.append(cell.solver_walls)
+
+            grid_solver.append(row_data)
+
+        return grid_solver
 
     def generate(self, start_x=0, start_y=0):
         if self.seed is not None:
@@ -107,7 +128,6 @@ class PrimeGenerator:
 
         while self.frontier:
             cell_b = random.choice(sorted(self.frontier, key=lambda c: (c.x, c.y)))
-            print(f"cell_b = ({cell_b.x}, {cell_b.y})")
             self.frontier.remove(cell_b)
 
             visited_neighbors = []

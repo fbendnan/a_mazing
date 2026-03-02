@@ -5,3 +5,4 @@ class Cell:
         self.is_visited = False
         self.walls = {'N': True, 'E': True, 'S': True, 'W': True}
         self.is_cell_42 = False
+        self.solver_walls = []

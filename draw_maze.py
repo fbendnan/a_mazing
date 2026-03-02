@@ -2,9 +2,7 @@ import curses
 import random
 from Prim_algo import PrimeGenerator
 
-### key q if screen is small 
-### change cat to mouse
-#### add the path of the maze and try the algo in my maze
+# add the path of the maze and try the algo in my maze
 
 WALL = "█"
 CELL_W = 2
@@ -86,7 +84,7 @@ class MazeDrawing:
         row_pos_exit = i * (CELL_H + 1) + 1
         col_pos_exit = j * (CELL_W + 1) + 1
 
-        stdscr.addstr(row_pos_entry, col_pos_entry, "🐈")
+        stdscr.addstr(row_pos_entry, col_pos_entry, "🐀")
         stdscr.addstr(row_pos_exit, col_pos_exit, "🧀")
 
     def colorate_maze(self, stdscr, maze_color = 1):
@@ -124,7 +122,7 @@ class MazeDrawing:
         curses.use_default_colors()
         stdscr.keypad(True)
 
-        self.maze.generate(1, 0)
+        # self.maze.generate(1, 0)
         color = 1
 
         while True:
@@ -144,10 +142,17 @@ class MazeDrawing:
                 stdscr.addstr(
                     self.scr_height // 2 + 1,
                     max(0, self.scr_width // 2 - 8),
-                    "Resize please",
+                    "Resize it please",
+                )
+                stdscr.addstr(
+                    self.scr_height // 2 + 2,
+                    max(0, self.scr_width // 2 - 9),
+                    "or press q to Quit",
                 )
                 stdscr.refresh()
-                stdscr.getch()
+                key = stdscr.getch()
+                if key == ord("q"):
+                    break
                 continue   
             stdscr.clear()
             self.draw(stdscr, color)

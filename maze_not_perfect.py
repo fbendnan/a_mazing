@@ -1,7 +1,9 @@
 import random
 from typing import Dict
+from Cell import Cell
 
-class PrimeGenerator:
+
+class DFSGenerator:
 
     def __init__(self, configuration: Dict):
 
@@ -11,7 +13,6 @@ class PrimeGenerator:
         self.entry = configuration["ENTRY"]
         self.exit = configuration["EXIT"]
         self.seed = configuration.get("SEED", None)
-        self.perfect = configuration.get("PERFECT", True)
 
         if self.seed is not None:
             random.seed(self.seed)
@@ -22,130 +23,154 @@ class PrimeGenerator:
 
         self._init_grid()
 
+    # ==========================
+    # Grid Initialization
+    # ==========================
+
     def _init_grid(self):
         for i in range(self.height):
             row = []
             for j in range(self.width):
-                row.append({
-                    "wall": [1,1,1,1],   # Top Right Bottom Left
-                    "visit": False,
-                    "pos": (i,j),
-                    "is_42": False
-                })
+                row.append(Cell(i, j))
             self.grid.append(row)
 
-    def ft_show(self, grid):
+    # ==========================
+    # Remove Wall Between Cells
+    # ==========================
 
-        for x in grid:
+    def remove_current_wall(self, row, col, new_row, new_col):
 
-            for arr in x:
-                top = "-----" if arr["wall"][0] == 1 else "     "
-                print(f"+{top}", end="")
-            print("+")
+        current = self.grid[row][col]
+        neighbor = self.grid[new_row][new_col]
 
-            for arr in x:
-                left = "|" if arr["wall"][3] == 1 else " "
-                content = " 42 " if arr["is_42"] else "    "
-                print(f"{left}{content}", end="")
-            print("|")
+        if row > new_row:  # move up
+            current.walls['N'] = False
+            neighbor.walls['S'] = False
 
-        for arr in grid[-1]:
-            print("+-----", end="")
-        print("+")
+        elif row < new_row:  # move down
+            current.walls['S'] = False
+            neighbor.walls['N'] = False
 
+        elif new_col > col:  # move right
+            current.walls['E'] = False
+            neighbor.walls['W'] = False
 
-    def remove_current_wall(self, row , col , new_row ,new_col, grid):
-
-        if row > new_row:
-            grid[row][col]["wall"][0] = 0
-            grid[new_row][new_col]["wall"][2] = 0
-
-        elif row < new_row:
-            grid[row][col]["wall"][2] = 0
-            grid[new_row][new_col]["wall"][0] = 0
-
-        elif new_col > col:
-            grid[row][col]["wall"][1] = 0
-            grid[new_row][new_col]["wall"][3] = 0
-
-        elif new_col < col:
-            grid[row][col]["wall"][3] = 0
-            grid[new_row][new_col]["wall"][1] = 0
+        elif new_col < col:  # move left
+            current.walls['W'] = False
+            neighbor.walls['E'] = False
 
         return 1
 
-    def visited_befor_42(self, grid, width, heigh):
+    # ==========================
+    # Draw 42 Pattern (Protected)
+    # ==========================
+
+    def visited_before_42(self):
 
         pattern_42 = [
-            [1,0,0,0,1,1,1],
-            [1,0,1,0,0,0,1],
-            [1,1,1,0,1,1,1],
-            [0,0,1,0,1,0,0],
-            [0,0,1,0,1,1,1]
+            [1, 0, 0, 0, 1, 1, 1],
+            [1, 0, 1, 0, 0, 0, 1],
+            [1, 1, 1, 0, 1, 1, 1],
+            [0, 0, 1, 0, 1, 0, 0],
+            [0, 0, 1, 0, 1, 1, 1],
         ]
 
         pattern_rows = len(pattern_42)
         pattern_cols = len(pattern_42[0])
 
-        start_row = (heigh - pattern_rows) // 2
-        start_col = (width - pattern_cols) // 2
-
-        if pattern_rows > heigh or pattern_cols > width:
+        if pattern_rows > self.height or pattern_cols > self.width:
             print("Pattern too big for the grid!")
             return
 
-        for x in range(pattern_rows):
-            for y in range(pattern_cols):
-                if pattern_42[x][y] == 1:
-                    grid[start_row + x][start_col + y]["visit"] = True
-                    grid[start_row + x][start_col + y]["is_42"] = True
-    def ft_algo(self, grid, width, heigh):
+        start_row = (self.height - pattern_rows) // 2
+        start_col = (self.width - pattern_cols) // 2
 
-        for i in grid:
-            for j in i:
-                if j["pos"] == self.start:
-                    j["visit"] = True
-                    self.stack = [j["pos"]]
+        for i in range(pattern_rows):
+            for j in range(pattern_cols):
+                if pattern_42[i][j] == 1:
+                    cell = self.grid[start_row + i][start_col + j]
+                    cell.is_visited = True
+                    cell.is_cell_42 = True
+
+    # ==========================
+    # DFS Algorithm
+    # ==========================
+
+    def ft_algo(self):
+
+        # Find start cell
+        start_row, start_col = self.start
+        start_cell = self.grid[start_row][start_col]
+        start_cell.is_visited = True
+        self.stack.append((start_row, start_col))
 
         while self.stack:
 
             row, col = self.stack[-1]
 
             neighbors = [
-                (row+1,col),
-                (row-1,col),
-                (row,col+1),
-                (row,col-1)
+                (row + 1, col),
+                (row - 1, col),
+                (row, col + 1),
+                (row, col - 1)
             ]
 
             random.shuffle(neighbors)
 
-            check = 0
+            moved = False
 
             for new_row, new_col in neighbors:
 
-                if 0 <= new_row < heigh and 0 <= new_col < width:
+                if 0 <= new_row < self.height and 0 <= new_col < self.width:
 
-                    if grid[new_row][new_col]["visit"] == False:
+                    neighbor = self.grid[new_row][new_col]
 
-                        grid[new_row][new_col]["visit"] = True
-                        self.stack.append((new_row,new_col))
+                    if not neighbor.is_visited:
+                        neighbor.is_visited = True
+                        self.stack.append((new_row, new_col))
 
-                        check += self.remove_current_wall(row,col,new_row,new_col,grid)
+                        self.remove_current_wall(row, col, new_row, new_col)
+
+                        moved = True
                         break
-                    elif random.random() < 0.1 and not grid[new_row][new_col].is_42: 
-                        remove_current_wall(row, col, new_row, new_col, grid)
-                    
 
-            if check == 0:
+                    elif random.random() < 0.1 and not neighbor.is_cell_42 and not self.configuration["PERFECT"]:
+                        self.remove_current_wall(row, col, new_row, new_col)
+
+            if not moved:
                 self.stack.pop()
 
+    # ==========================
+    # Show Maze
+    # ==========================
 
-    def main(self):
-        self.visited_befor_42(self.grid, self.width, self.height)
-        self.ft_algo(self.grid, self.width, self.height)
-        self.ft_show(self.grid)
+    def ft_show(self):
 
+        for row in self.grid:
 
-maze = PrimeGenerator(config)
-maze.main()
+            # Top walls
+            for cell in row:
+                top = "-----" if cell.walls['N'] else "     "
+                print(f"+{top}", end="")
+            print("+")
+
+            # Left walls + content
+            for cell in row:
+                left = "|" if cell.walls['W'] else " "
+                content = " 42 " if cell.is_cell_42 else "    "
+                print(f"{left}{content}", end="")
+            print("|")
+
+        # Bottom border
+        for cell in self.grid[-1]:
+            print("+-----", end="")
+        print("+")
+
+    # ==========================
+    # Generate Maze
+    # ==========================
+
+    def generate(self):
+        self.visited_before_42()
+        self.ft_algo()
+        # self.ft_show()
