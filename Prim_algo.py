@@ -96,12 +96,10 @@ class PrimeGenerator:
                 neighbor = self.grid[nx][ny]
                 self.remove_wall_between(cell, neighbor)
 
-    def generate_grid_walls_for_solver(self) -> List[List[List[int]]]:
-        grid_solver = []
-
+    def generate_grid_walls_for_solver(self):
+        grid_walls = []
         for row in self.grid:
-            row_data = []
-
+            row_walls = []
             for cell in row:
                 cell_walls = [
                     1 if cell.walls['N'] else 0,
@@ -110,11 +108,9 @@ class PrimeGenerator:
                     1 if cell.walls['W'] else 0,
                 ]
                 cell.solver_walls = cell_walls
-                row_data.append(cell.solver_walls)
-
-            grid_solver.append(row_data)
-
-        return grid_solver
+                row_walls.append(cell.solver_walls)
+            grid_walls.append(row_walls)
+        return grid_walls
 
     def generate(self, start_x=0, start_y=0):
         if self.seed is not None:

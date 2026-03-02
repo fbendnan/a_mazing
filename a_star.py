@@ -71,7 +71,7 @@ def solver(wall):
     # maze = PrimeGenerator({'WIDTH': 4, 'HEIGHT': 4, 'EXIT': (3, 2), 'ENTRY': (0, 0), 'OUTPUT_FILE': 'maze.txt', 'PERFECT': True, 'SEED': 27, 'ALGO': 'prim'})
     # maze.generate()
     wall = wall
-    print(wall)
+    
     info = Info(height, width, g)
     start = info.position_start()
     g[start] = 0
