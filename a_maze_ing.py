@@ -19,7 +19,7 @@ try:
 
     maze = PrimeGenerator(configuration)
     maze.generate()
-    print(maze.generate_grid_walls_for_solver())
+    # print(maze.generate_grid_walls_for_solver())
     # walls =
 
     path = solver(maze.generate_grid_walls_for_solver())

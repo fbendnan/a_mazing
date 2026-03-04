@@ -1,4 +1,3 @@
-# from maze import generate_maze
 from Prim_algo import PrimeGenerator
 
 
@@ -116,11 +115,4 @@ def solver(wall):
                     if (x, y) == (nx, ny):
                         open_list[index] = (f, (nx, ny))
                         break
-
-        # print("Current:", current)
-
-        print("this the path ", path)
-        return path
-
-
-# solver()
+    return path
