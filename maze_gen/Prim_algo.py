@@ -1,5 +1,5 @@
 import random
-from Cell import Cell
+from .Cell import Cell
 from typing import Dict, Set, List
 
 DIRS = {

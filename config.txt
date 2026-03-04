@@ -5,4 +5,3 @@ ENTRY=1,2
 OUTPUT_FILE=maze.txt
 PERFECT=True
 SEED=27
-ALGO=prim

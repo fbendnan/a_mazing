@@ -1,6 +1,6 @@
 import random
 from typing import Dict
-from Cell import Cell
+from .Cell import Cell
 
 
 class DFSGenerator:

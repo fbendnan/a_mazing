@@ -1,8 +1,8 @@
 from typing import Dict, Any
 
+
 H_42 = 5
 W_42 = 7
-
 
 def mandatory_exist(configuration: Dict):
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
@@ -68,7 +68,7 @@ def parsser(config_file: str) -> Any:
                     raise ValueError(
                         "you shouldn't duplicate a parametter"
                         )
-                configuration[to_check] = str(line_s[1].strip('\n'))
+                configuration[to_check] = str(line_s[1].strip('\n').upper())
             else:
                 raise ValueError(
                     "you enter a parameter does't needed...!"

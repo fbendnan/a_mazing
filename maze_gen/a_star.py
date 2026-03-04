@@ -1,4 +1,4 @@
-from Prim_algo import PrimeGenerator
+from .Prim_algo import PrimeGenerator
 
 
 class Info:
@@ -8,11 +8,11 @@ class Info:
         self.g = g
 
     def position_start(self):
-        start = (3, 2)
+        start = (1, 2)
         return start
 
     def position_goal(self):
-        goal = (10, 37)
+        goal = (1, 8)
         return goal
 
 
@@ -111,4 +111,4 @@ def solver(wall):
 
     final_path.append(start)
     final_path.reverse()  
-    return path
+    return final_path

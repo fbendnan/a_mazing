@@ -1,7 +1,9 @@
 import curses
 import random
-from Prim_algo import PrimeGenerator
-from a_star import solver
+from .Prim_algo import PrimeGenerator
+from .maze_not_perfect import DFSGenerator
+from .a_star import solver
+import time
 
 # add the path of the maze and try the algo in my maze
 
@@ -109,7 +111,7 @@ class MazeDrawing:
 
     def show_path(self, stdscr):
         path = solver(self.maze.generate_grid_walls_for_solver())
-        for cell in path:
+        for cell in path[1:-1]:
             ##############check the row and col how they returned from path
             row, col = cell
             row_pos = row * (CELL_H + 1) + 1
@@ -131,8 +133,7 @@ class MazeDrawing:
         curses.start_color()
         curses.use_default_colors()
         stdscr.keypad(True)
-
-        # self.maze.generate(1, 0)
+        is_path = False
         color = 1
 
         while True:
@@ -166,16 +167,23 @@ class MazeDrawing:
                 continue   
             stdscr.clear()
             self.draw(stdscr, color)
+            if is_path:
+                self.show_path(stdscr)
+                stdscr.refresh()
+                time.sleep(0.5)
             key = stdscr.getch()
 
             if key == ord("1"):
                 if self.maze.seed is not None:
                     self.maze.configuration["SEED"] = None
-                self.maze = PrimeGenerator(self.maze.configuration)
-                self.maze.generate(1, 0)
+                if 'ALGO' in self.maze.configuration and self.maze.configuration["ALGO"] == 'DFS':
+                    self.maze = DFSGenerator(self.maze.configuration)
+                else:
+                    self.maze = PrimeGenerator(self.maze.configuration)
+                self.maze.generate()
 
             elif key == ord("2"):
-                self.show_path()
+                is_path = not is_path
 
             elif key == ord("3"):
                 color = random.randint(1, 8)

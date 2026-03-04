@@ -1,27 +1,27 @@
 import sys
-from parssing import parsser
-from Prim_algo import PrimeGenerator
-from draw_maze import MazeDrawing
-from maze_not_perfect import DFSGenerator
-from a_star import solver
-
+from maze_gen.parssing import parsser
+from maze_gen.Prim_algo import PrimeGenerator
+from maze_gen.draw_maze import MazeDrawing
+from maze_gen.maze_not_perfect import DFSGenerator
+# from maze_gen.a_star import solver
 import curses
 
 
-CONFIG_FILE = sys.argv[1]
 try:
-
+    if len(sys.argv) != 2:
+        raise ValueError("You should enter: python3 a_maze_ing.py config.txt")
+    CONFIG_FILE = sys.argv[1]
     configuration = parsser(CONFIG_FILE)
 
-    # print(configuration)
-    # maze = DFSGenerator(configuration)
-    # maze.generate()
+    if 'ALGO' in configuration:
+        if configuration["ALGO"] == 'DFS':
+            maze = DFSGenerator(configuration)
+        elif configuration['ALGO'] != 'PRIM':
+            raise ValueError("ALGO='PRIM' or ALGO='DFS'")
 
     maze = PrimeGenerator(configuration)
     maze.generate()
 
-    path = solver(maze.generate_grid_walls_for_solver())
-    # print(path)
     draw = MazeDrawing(maze)
     draw_maze = MazeDrawing(maze)
     curses.wrapper(draw_maze.main)
