@@ -17,8 +17,6 @@ CELLS_42_offset = [
     (2, -1), (2, 1), (2, 2), (2, 3)
 ]
 
-#add generate grid walls for solver 
-
 class PrimeGenerator:
     def __init__(self, configuration: Dict):
         self.configuration = configuration
@@ -115,9 +113,12 @@ class PrimeGenerator:
     def generate(self, start_x=0, start_y=0):
         if self.seed is not None:
             random.seed(self.seed)
-
+        x, y = self.entry
+        i, j = self.exit
 
         self.mark_42_cell()
+        if self.grid[x][y].is_cell_42 or self.grid[i][j].is_cell_42:
+            raise ValueError("Entry and exit should be outside 42")
         start = self.grid[start_x][start_y]
         start.is_visited = True
         self.add_frontier(start)

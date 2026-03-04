@@ -19,13 +19,11 @@ try:
 
     maze = PrimeGenerator(configuration)
     maze.generate()
-    # print(maze.generate_grid_walls_for_solver())
-    # walls =
 
     path = solver(maze.generate_grid_walls_for_solver())
-    print(path)
-    # draw = MazeDrawing(maze)
-    # draw_maze = MazeDrawing(maze)
-    # curses.wrapper(draw_maze.main)
+    # print(path)
+    draw = MazeDrawing(maze)
+    draw_maze = MazeDrawing(maze)
+    curses.wrapper(draw_maze.main)
 except Exception as e:
     print(e)

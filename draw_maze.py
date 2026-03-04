@@ -1,6 +1,7 @@
 import curses
 import random
 from Prim_algo import PrimeGenerator
+from a_star import solver
 
 # add the path of the maze and try the algo in my maze
 
@@ -106,6 +107,15 @@ class MazeDrawing:
                 else:
                     stdscr.addstr(row_idx, col_idx, char)
 
+    def show_path(self, stdscr):
+        path = solver(self.maze.generate_grid_walls_for_solver())
+        for cell in path:
+            ##############check the row and col how they returned from path
+            row, col = cell
+            row_pos = row * (CELL_H + 1) + 1
+            col_pos = col * (CELL_W + 1) + 1
+            stdscr.addstr(row_pos, col_pos, "🐾")
+
     def draw(self, stdscr, maze_color):
         self.build_maze_canvas()
         self.colorate_maze(stdscr, maze_color)
@@ -165,7 +175,7 @@ class MazeDrawing:
                 self.maze.generate(1, 0)
 
             elif key == ord("2"):
-                pass
+                self.show_path()
 
             elif key == ord("3"):
                 color = random.randint(1, 8)

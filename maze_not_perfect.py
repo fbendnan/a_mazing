@@ -23,10 +23,6 @@ class DFSGenerator:
 
         self._init_grid()
 
-    # ==========================
-    # Grid Initialization
-    # ==========================
-
     def _init_grid(self):
         for i in range(self.height):
             row = []
@@ -34,9 +30,6 @@ class DFSGenerator:
                 row.append(Cell(i, j))
             self.grid.append(row)
 
-    # ==========================
-    # Remove Wall Between Cells
-    # ==========================
 
     def remove_current_wall(self, row, col, new_row, new_col):
 
@@ -61,9 +54,6 @@ class DFSGenerator:
 
         return 1
 
-    # ==========================
-    # Draw 42 Pattern (Protected)
-    # ==========================
 
     def visited_before_42(self):
 
@@ -91,10 +81,6 @@ class DFSGenerator:
                     cell = self.grid[start_row + i][start_col + j]
                     cell.is_visited = True
                     cell.is_cell_42 = True
-
-    # ==========================
-    # DFS Algorithm
-    # ==========================
 
     def ft_algo(self):
 
@@ -140,9 +126,6 @@ class DFSGenerator:
             if not moved:
                 self.stack.pop()
 
-    # ==========================
-    # Show Maze
-    # ==========================
 
     def ft_show(self):
 
@@ -166,9 +149,6 @@ class DFSGenerator:
             print("+-----", end="")
         print("+")
 
-    # ==========================
-    # Generate Maze
-    # ==========================
 
     def generate(self):
         self.visited_before_42()

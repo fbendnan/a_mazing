@@ -4,18 +4,6 @@ H_42 = 5
 W_42 = 7
 
 
-###### entry and exit must be outside 42 cells
-
-CELLs_42 = []
-
-CELLS_42_offset = [
-    (0, -1), (0, -2), (0, -3), (0, 1), (0, 2), (0, 3),
-    (-1, 3), (-1, -3),
-    (-2, -3), (-2, 1), (-2, 2), (-2, 3),
-    (1, -1), (1, 1),
-    (2, -1), (2, 1), (2, 2), (2, 3)
-]
-
 def mandatory_exist(configuration: Dict):
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
     for m in mandatory:
