@@ -73,7 +73,7 @@ def solver(wall):
     visited = set()
 
     path = {}
-
+            
     while open_list:
         (f_val, current) = brain.min_f(open_list)
         open_list.remove((f_val, current))
@@ -100,5 +100,15 @@ def solver(wall):
                 for index, (old_f, (x, y)) in enumerate(open_list):
                     if (x, y) == (nx, ny):
                         open_list[index] = (f, (nx, ny))
-                        break
+                        break    
+    final_path = []
+    node = goal
+    if node not in path:
+        return []
+    while node != start:
+        final_path.append(node)
+        node = path[node]
+
+    final_path.append(start)
+    final_path.reverse()  
     return path
