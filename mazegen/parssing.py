@@ -73,7 +73,7 @@ def parsser(config_file: str) -> Any:
                     raise ValueError(
                         "you shouldn't duplicate a parametter"
                         )
-                configuration[to_check] = str(line_s[1].strip('\n').upper())
+                configuration[to_check] = str(line_s[1].strip('\n ').upper())
             else:
                 raise ValueError(
                     "you enter a parameter doesn't needed...!"
@@ -102,6 +102,9 @@ def parsser(config_file: str) -> Any:
             raise ValueError("The entry and Exit must be inside the maze")
         elif not (exit[0] >= 0 and exit[0] < height):
             raise ValueError("The entry and Exit must be inside the maze")
+            ######################################################
+        if not configuration["OUTPUT_FILE"].endswith(".txt"):
+            raise ValueError("OUTPUT FILE must end with .txt")
             
     return configuration
 

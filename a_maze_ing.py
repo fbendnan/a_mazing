@@ -12,7 +12,7 @@ if len(sys.argv) != 2:
     raise ValueError("You should enter: python3 a_maze_ing.py config.txt")
 CONFIG_FILE = sys.argv[1]
 configuration = parsser(CONFIG_FILE)
-
+print(configuration)
 maze = MazeGenerator(configuration)
 maze.generate()
 
