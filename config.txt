@@ -4,4 +4,5 @@ Exit = 1,0
 ENTRY=1,6
 OUTPUT_FILE=  maze.txt
 PERFECT=true
+seed =6
 algo=   dfs

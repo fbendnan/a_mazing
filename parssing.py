@@ -36,7 +36,7 @@ def parse_config(config_file: str) -> Dict[str, Any]:
     configuration: Dict[str, Any] = {
     }
 
-    mandatory = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE"}
+    mandatory = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE", "PERFECT"}
     int_fields = {"WIDTH", "HEIGHT", "SEED"}
     coord_fields = {"ENTRY", "EXIT"}
     str_fields = {"OUTPUT_FILE", "ALGO"}

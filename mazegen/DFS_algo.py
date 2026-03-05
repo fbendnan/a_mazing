@@ -1,5 +1,5 @@
 import random
-from typing import Dict
+from typing import Dict, List
 from .Cell import Cell
 
 
@@ -19,8 +19,8 @@ class DFSGenerator:
             random.seed(self.seed)
 
         self.start = self.entry
-        self.stack = []
-        self.grid = []
+        self.stack :List = []
+        self.grid :List = []
 
         self._init_grid()
 

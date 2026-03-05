@@ -1,5 +1,5 @@
 PYTHON = python3
-MAIN = a_maze_ing.py
+MAIN = main.py
 CONFIG_FILE = config.txt
 
 help:
@@ -20,10 +20,15 @@ lint:
 clean:
 	@rm -rf __pycache__
 	@rm -rf .mypy_cache
+	@rm -rf mazegen/__pycache__
 	@find . -name "*.pyc" -delete
+	@rm -rf dist
+	@rm -rf output_validator.py
 
 install:
 	@pip install flake8 mypy
+	@pip install build
+	@pip install mazegen-0.1.0-py3-none-any.whl
 
 debug:
 	$(PYTHON) -m pdb $(MAIN) $(CONFIG_FILE)
@@ -32,4 +37,7 @@ lint-strict:
 	@flake8 .
 	@mypy . --strict
 
-.PHONY: help install run clean debug lint lint-strict
+build:
+	python -m build --wheel
+
+.PHONY: help install run clean debug lint lint-strict build

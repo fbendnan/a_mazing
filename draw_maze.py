@@ -1,6 +1,6 @@
 import curses
 import random
-from .maze_gen import MazeGenerator
+from .mazegen import MazeGenerator
 from .a_star import solver
 import time
 
