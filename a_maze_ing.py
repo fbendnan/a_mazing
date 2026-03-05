@@ -17,13 +17,17 @@ try:
         if configuration["ALGO"] == 'DFS':
             maze = DFSGenerator(configuration)
         elif configuration['ALGO'] != 'PRIM':
+            maze = PrimeGenerator(configuration)
+        else:
             raise ValueError("ALGO='PRIM' or ALGO='DFS'")
-
-    maze = PrimeGenerator(configuration)
+    else:
+        maze = PrimeGenerator(configuration)
     maze.generate()
 
     draw = MazeDrawing(maze)
     draw_maze = MazeDrawing(maze)
     curses.wrapper(draw_maze.main)
+
+
 except Exception as e:
     print(e)
