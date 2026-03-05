@@ -1,110 +1,145 @@
-from typing import Dict, Any
+from typing import Dict, Tuple, Any
+
+H_42: int = 5
+W_42: int = 7
 
 
-H_42 = 5
-W_42 = 7
-#exit enter 
-#handele strings with spacesand more than one word
-#dfs (x and y)
-#if maze is short should writen without 42
-#
+def parse_config(config_file: str) -> Dict[str, Any]:
+    """
+    Parse a maze configuration file.
 
-def mandatory_exist(configuration: Dict):
-    mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
-    for m in mandatory:
-        if m not in configuration:
-            return False
-    return True
+    The configuration file contains key=value pairs describing
+    the maze parameters.
 
-def parsser(config_file: str) -> Any:
-    configuration: Dict= {}
-    with open(config_file, 'r') as configuratin_file:
-        for line in configuratin_file:
+    Mandatory parameters:
+        WIDTH (int)        : Maze width
+        HEIGHT (int)       : Maze height
+        ENTRY (x,y)        : Entry coordinates
+        EXIT (x,y)         : Exit coordinates
+        OUTPUT_FILE (str)  : Output file name (.txt)
+
+    Optional parameters:
+        PERFECT (bool)     : Whether the maze is perfect (default: True)
+        SEED (int)         : Random seed
+        ALGO (str)         : Algorithm to use ('dfs' or 'prim')
+
+    Args:
+        config_file (str): Path to the configuration file.
+
+    Returns:
+        Dict[str, Any]: Parsed configuration dictionary.
+
+    Raises:
+        ValueError: If configuration values are invalid.
+    """
+
+    configuration: Dict[str, Any] = {
+    }
+
+    mandatory = {"WIDTH", "HEIGHT", "ENTRY", "EXIT", "OUTPUT_FILE"}
+    int_fields = {"WIDTH", "HEIGHT", "SEED"}
+    coord_fields = {"ENTRY", "EXIT"}
+    str_fields = {"OUTPUT_FILE", "ALGO"}
+
+    with open(config_file, "r") as file:
+
+        for line in file:
             line = line.strip()
-            if not line or line.startswith('#'):
+
+            if not line or line.startswith("#"):
                 continue
-            if '=' not in line:
-                raise ValueError(
-                    "Invalid line format,"
-                    " the line should containe key=value"
-                )
-            line_s = line.split('=')
-            to_check = line_s[0].strip().upper()
-            if to_check == 'WIDTH' or to_check == 'HEIGHT' \
-                or to_check == 'SEED':
-                if to_check in configuration:
-                    raise ValueError(
-                        "you shouldn't duplicate a parametter"
-                        )
+
+            if "=" not in line:
+                raise ValueError("Invalid line format. Expected key=value")
+
+            key, value = line.split("=", 1)
+            key = key.strip().upper()
+            value = value.strip()
+
+            if key in configuration:
+                raise ValueError(f"Duplicate parameter: {key}")
+
+            # ---------- integers ----------
+            if key in int_fields:
+                try:
+                    configuration[key] = int(value)
+                except ValueError:
+                    raise ValueError(f"{key} must be an integer")
+
+            # ---------- coordinates ----------
+            elif key in coord_fields:
+                parts = value.split(",")
+
+                if len(parts) != 2:
+                    raise ValueError(f"{key} must contain two coordinates (x,y)")
+
+                try:
+                    x = int(parts[0].strip())
+                    y = int(parts[1].strip())
+                except ValueError:
+                    raise ValueError(f"{key} coordinates must be integers")
+
+                configuration[key] = (x, y)
+
+            # ---------- boolean ----------
+            elif key == "PERFECT":
+                value_lower = value.lower()
+
+                if value_lower == "true":
+                    configuration[key] = True
+                elif value_lower == "false":
+                    configuration[key] = False
                 else:
-                    try:
-                        value = line_s[1].strip('\n')
-                        configuration[to_check] = int(value)
-                    except ValueError:
-                        raise ValueError("Error: invalid data check HEIGHT, WIDTH and SEED configuration")
-            elif to_check == 'ENTRY' or to_check == 'EXIT':
-                if to_check in configuration:
-                    raise ValueError(
-                        "you shouldn't duplicate a parametter"
-                        )
-                coord = line_s[1].split(',')
-                if len(coord) == 2:
-                    try:
-                        configuration[to_check] = (
-                            int(coord[0]), int(coord[1])
-                            )
-                    except ValueError:
-                        raise ValueError("make sure the ENTRY and EXIT data")
-                else:
-                    raise ValueError(
-                        "in Entry and Exit you must enter 2 values"
-                        )
-            elif to_check == 'PERFECT':
-                if to_check in configuration:
-                    raise ValueError(
-                        "you shouldn't duplicate a parametter"
-                        )
-                if line_s[1].strip().upper() == 'TRUE':
-                    configuration[to_check] = True
-                elif line_s[1].strip().upper() == 'FALSE':
-                    configuration[to_check] = False
-            elif to_check == 'OUTPUT_FILE' or to_check == 'ALGO':
-                if to_check in configuration:
-                    raise ValueError(
-                        "you shouldn't duplicate a parametter"
-                        )
-                configuration[to_check] = str(line_s[1].strip('\n ').upper())
+                    raise ValueError("PERFECT must be TRUE or FALSE")
+
+            # ---------- strings ----------
+            elif key in str_fields:
+                configuration[key] = value
+
             else:
-                raise ValueError(
-                    "you enter a parameter doesn't needed...!"
-                    )
-        if len(configuration) < 6 \
-                or mandatory_exist(configuration) is False:
-            raise ValueError(
-                "you should enter all the mandatory data needed: "
-                "'WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', "
-                "'OUTPUT_FILE', 'PERFECT'"
-                )
-        if configuration["HEIGHT"] < (H_42 + 2) or configuration["WIDTH"] < (W_42 + 2):
-            raise ValueError("HEIGHT must be (>= 7) and WIDTH must be (>= 9)")
+                raise ValueError(f"Unknown parameter: {key}")
 
-        entry = configuration['ENTRY']
-        exit = configuration['EXIT']
-        width = configuration['WIDTH']
-        height = configuration['HEIGHT']
-        if entry == exit:
-            raise ValueError("entry and exit must be different")
-        if not (entry[1] >= 0 and entry[1] < width):
-            raise ValueError("The entry and Exit must be inside the maze")
-        elif not (exit[1] >= 0 and exit[1] < width):
-            raise ValueError("The entry and Exit must be inside the maze")
-        elif not (entry[0] >= 0 and entry[0] < height):
-            raise ValueError("The entry and Exit must be inside the maze")
-        elif not (exit[0] >= 0 and exit[0] < height):
-            raise ValueError("The entry and Exit must be inside the maze")
-            ######################################################
-        if not configuration["OUTPUT_FILE"].endswith(".txt"):
-            raise ValueError("OUTPUT FILE must end with .txt")
-            
+    # ---------- check mandatory ----------
+    for param in mandatory:
+        if param not in configuration:
+            raise ValueError(f"Missing mandatory parameter: {param}")
+
+    width = configuration["WIDTH"]
+    height = configuration["HEIGHT"]
+    entry = configuration["ENTRY"]
+    exit_ = configuration["EXIT"]
+
+    # ---------- maze size ----------
+    if height < (H_42 + 2) or width < (W_42 + 2):
+        raise ValueError("HEIGHT must be >= 7 and WIDTH must be >= 9")
+
+    # ---------- entry / exit ----------
+    if entry == exit_:
+        raise ValueError("ENTRY and EXIT must be different")
+
+    if not (0 <= entry[0] < height and 0 <= entry[1] < width):
+        raise ValueError("ENTRY must be inside the maze")
+
+    if not (0 <= exit_[0] < height and 0 <= exit_[1] < width):
+        raise ValueError("EXIT must be inside the maze")
+
+    # ---------- output file ----------
+    output_file = configuration["OUTPUT_FILE"]
+
+    if not isinstance(output_file, str) or not output_file.endswith(".txt"):
+        raise ValueError("OUTPUT_FILE must end with '.txt'")
+    output_file = configuration["OUTPUT_FILE"]
+
+    if " " in output_file:
+        raise ValueError("OUTPUT_FILE must not contain spaces")
+
+    # ---------- algorithm ----------
+    if "ALGO" in configuration:
+        algo = configuration["ALGO"].lower()
+
+        if algo not in {"dfs", "prim"}:
+            raise ValueError("ALGO must be 'dfs' or 'prim'")
+
+        configuration["ALGO"] = algo
+
     return configuration
-
