@@ -58,7 +58,7 @@ def solver(maze):
     # width = 40
     g = {}
 
-    wall = maze.generate_grid_walls_for_solver()
+    wall = maze.get_solver_walls()
     
     # info = Info(maze.height, maze.width, g)
     g = {}

@@ -13,6 +13,7 @@ class DFSGenerator:
         self.entry = configuration["ENTRY"]
         self.exit = configuration["EXIT"]
         self.seed = configuration.get("SEED", None)
+        self.perfect = configuration.get("PERFECT", True)
 
         if self.seed is not None:
             random.seed(self.seed)
@@ -36,19 +37,19 @@ class DFSGenerator:
         current = self.grid[row][col]
         neighbor = self.grid[new_row][new_col]
 
-        if row > new_row:  # move up
+        if row > new_row:
             current.walls['N'] = False
             neighbor.walls['S'] = False
 
-        elif row < new_row:  # move down
+        elif row < new_row:
             current.walls['S'] = False
             neighbor.walls['N'] = False
 
-        elif new_col > col:  # move right
+        elif new_col > col:
             current.walls['E'] = False
             neighbor.walls['W'] = False
 
-        elif new_col < col:  # move left
+        elif new_col < col:
             current.walls['W'] = False
             neighbor.walls['E'] = False
 
@@ -84,7 +85,6 @@ class DFSGenerator:
 
     def ft_algo(self):
 
-        # Find start cell
         start_row, start_col = self.start
         start_cell = self.grid[start_row][start_col]
         start_cell.is_visited = True
@@ -125,6 +125,7 @@ class DFSGenerator:
 
             if not moved:
                 self.stack.pop()
+
     def generate_grid_walls_for_solver(self):
         grid_walls = []
         for row in self.grid:
@@ -141,30 +142,10 @@ class DFSGenerator:
             grid_walls.append(row_walls)
         return grid_walls
 
-    def ft_show(self):
-
-        for row in self.grid:
-
-            # Top walls
-            for cell in row:
-                top = "-----" if cell.walls['N'] else "     "
-                print(f"+{top}", end="")
-            print("+")
-
-            # Left walls + content
-            for cell in row:
-                left = "|" if cell.walls['W'] else " "
-                content = " 42 " if cell.is_cell_42 else "    "
-                print(f"{left}{content}", end="")
-            print("|")
-
-        # Bottom border
-        for cell in self.grid[-1]:
-            print("+-----", end="")
-        print("+")
-
-
     def generate(self):
         self.visited_before_42()
+        x, y = self.entry
+        i, j = self.exit
+        if self.grid[y][x].is_cell_42 or self.grid[j][i].is_cell_42:
+            raise ValueError("Entry and exit should be outside 42")
         self.ft_algo()
-        # self.ft_show()

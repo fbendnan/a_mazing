@@ -3,6 +3,11 @@ from typing import Dict, Any
 
 H_42 = 5
 W_42 = 7
+#exit enter 
+#handele strings with spacesand more than one word
+#dfs (x and y)
+#if maze is short should writen without 42
+#
 
 def mandatory_exist(configuration: Dict):
     mandatory = ['WIDTH', 'HEIGHT', 'ENTRY', 'EXIT', 'OUTPUT_FILE', 'PERFECT']
@@ -71,7 +76,7 @@ def parsser(config_file: str) -> Any:
                 configuration[to_check] = str(line_s[1].strip('\n').upper())
             else:
                 raise ValueError(
-                    "you enter a parameter does't needed...!"
+                    "you enter a parameter doesn't needed...!"
                     )
         if len(configuration) < 6 \
                 or mandatory_exist(configuration) is False:
@@ -87,6 +92,8 @@ def parsser(config_file: str) -> Any:
         exit = configuration['EXIT']
         width = configuration['WIDTH']
         height = configuration['HEIGHT']
+        if entry == exit:
+            raise ValueError("entry and exit must be different")
         if not (entry[1] >= 0 and entry[1] < width):
             raise ValueError("The entry and Exit must be inside the maze")
         elif not (exit[1] >= 0 and exit[1] < width):

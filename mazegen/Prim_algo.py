@@ -90,7 +90,7 @@ class PrimeGenerator:
             dx, dy = random.choice(list(DIRS.values()))
             nx, ny = row + dx, col + dy
 
-            if self.in_bounds(nx, ny) and not self.grid[nx][ny].is_cell_42:
+            if self.in_bounds(nx, ny) and not self.grid[nx][ny].is_cell_42 and not cell.is_cell_42:
                 neighbor = self.grid[nx][ny]
                 self.remove_wall_between(cell, neighbor)
 
@@ -146,4 +146,3 @@ class PrimeGenerator:
             self.add_frontier(cell_b)
         if not self.perfect:
             self.add_loops(0.1)
-
