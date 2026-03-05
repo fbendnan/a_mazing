@@ -59,14 +59,12 @@ def parse_config(config_file: str) -> Dict[str, Any]:
             if key in configuration:
                 raise ValueError(f"Duplicate parameter: {key}")
 
-            # ---------- integers ----------
             if key in int_fields:
                 try:
                     configuration[key] = int(value)
                 except ValueError:
                     raise ValueError(f"{key} must be an integer")
 
-            # ---------- coordinates ----------
             elif key in coord_fields:
                 parts = value.split(",")
 
@@ -81,7 +79,6 @@ def parse_config(config_file: str) -> Dict[str, Any]:
 
                 configuration[key] = (x, y)
 
-            # ---------- boolean ----------
             elif key == "PERFECT":
                 value_lower = value.lower()
 
@@ -92,14 +89,12 @@ def parse_config(config_file: str) -> Dict[str, Any]:
                 else:
                     raise ValueError("PERFECT must be TRUE or FALSE")
 
-            # ---------- strings ----------
             elif key in str_fields:
                 configuration[key] = value
 
             else:
                 raise ValueError(f"Unknown parameter: {key}")
 
-    # ---------- check mandatory ----------
     for param in mandatory:
         if param not in configuration:
             raise ValueError(f"Missing mandatory parameter: {param}")
@@ -109,11 +104,9 @@ def parse_config(config_file: str) -> Dict[str, Any]:
     entry = configuration["ENTRY"]
     exit_ = configuration["EXIT"]
 
-    # ---------- maze size ----------
     if height < (H_42 + 2) or width < (W_42 + 2):
         raise ValueError("HEIGHT must be >= 7 and WIDTH must be >= 9")
 
-    # ---------- entry / exit ----------
     if entry == exit_:
         raise ValueError("ENTRY and EXIT must be different")
 
@@ -123,7 +116,6 @@ def parse_config(config_file: str) -> Dict[str, Any]:
     if not (0 <= exit_[0] < height and 0 <= exit_[1] < width):
         raise ValueError("EXIT must be inside the maze")
 
-    # ---------- output file ----------
     output_file = configuration["OUTPUT_FILE"]
 
     if not isinstance(output_file, str) or not output_file.endswith(".txt"):
@@ -133,7 +125,6 @@ def parse_config(config_file: str) -> Dict[str, Any]:
     if " " in output_file:
         raise ValueError("OUTPUT_FILE must not contain spaces")
 
-    # ---------- algorithm ----------
     if "ALGO" in configuration:
         algo = configuration["ALGO"].lower()
 

@@ -16,13 +16,10 @@ class MazeGenerator:
         self.grid = None
 
     def generate(self):
-        print(self.algo)
-        if self.algo is 'PRIM':
+        if self.algo.upper() == 'PRIM':
             self.maze = PrimeGenerator(self.configuration)
-        elif self.algo is 'DFS':
+        elif self.algo.upper() == 'DFS':
             self.maze = DFSGenerator(self.configuration)
-        else:
-            raise ValueError("ALGO='PRIM' or ALGO='DFS'")
         self.maze.generate()
         self.grid = self.maze.grid
     

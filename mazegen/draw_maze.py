@@ -1,12 +1,8 @@
 import curses
 import random
-# from .Prim_algo import PrimeGenerator
-# from .DFS_algo import DFSGenerator
 from .maze_gen import MazeGenerator
 from .a_star import solver
 import time
-
-# add the path of the maze and try the algo in my maze
 
 WALL = "█"
 CELL_W = 2
@@ -114,7 +110,6 @@ class MazeDrawing:
     def show_path(self, stdscr):
         self.path = solver(self.maze)
         for cell in self.path[1:-1]:
-            ##############check the row and col how they returned from path
             row, col = cell
             row_pos = row * (CELL_H + 1) + 1
             col_pos = col * (CELL_W + 1) + 1
@@ -123,7 +118,6 @@ class MazeDrawing:
     def draw(self, stdscr, maze_color):
         self.build_maze_canvas()
         self.colorate_maze(stdscr, maze_color)
-        #############
         self.put_entry_and_exit(stdscr, self.maze.entry, self.maze.exit)
         self.colorate_42_cells(stdscr)
         self.print_choices(stdscr)
@@ -176,12 +170,8 @@ class MazeDrawing:
             key = stdscr.getch()
 
             if key == ord("1"):
-                # if self.maze.seed is not None:
-                #     self.maze.configuration["SEED"] = None
-                # if 'ALGO' in self.maze.configuration and self.maze.configuration["ALGO"] == 'DFS':
-                #     self.maze = DFSGenerator(self.maze.configuration)
-                # else:
-                #     self.maze = PrimeGenerator(self.maze.configuration)
+                if self.maze.seed is not None:
+                    self.maze.configuration["SEED"] = None
                 self.maze = MazeGenerator(self.maze.configuration)
                 self.maze.generate()
 
