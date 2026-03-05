@@ -1,7 +1,8 @@
 width = 9
 HEIGHT=7
-Exit = 1,8
-ENTRY=1,2
+Exit = 0,2
+ENTRY=0,0
 OUTPUT_FILE=maze.txt
 PERFECT=True
 SEED=27
+ALGO=DFS

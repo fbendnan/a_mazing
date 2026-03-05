@@ -1,24 +1,20 @@
-from .Prim_algo import PrimeGenerator
+# class Info:
+#     def __init__(self, height, width, g):
+#         self.height = height
+#         self.width = width
+#         self.g = g
+
+    # def position_start(self):
+    #     start = (1, 2)
+    #     return start
+
+    # def position_goal(self):
+    #     goal = (1, 8)
+    #     return goal
 
 
-class Info:
-    def __init__(self, height, width, g):
-        self.height = height
-        self.width = width
-        self.g = g
-
-    def position_start(self):
-        start = (1, 2)
-        return start
-
-    def position_goal(self):
-        goal = (1, 8)
-        return goal
-
-
-class Brain(Info):
+class Brain:
     def __init__(self, wall, height, width, g):
-        super().__init__(height, width, g)
         self.height = height
         self.width = width
         self.g = g
@@ -55,18 +51,21 @@ class Brain(Info):
         return f
 
 
-def solver(wall):
-    height = 12
-    width = 40
+def solver(maze):
+   
+
+    # height = 12
+    # width = 40
     g = {}
 
-    wall = wall
+    wall = maze.generate_grid_walls_for_solver()
     
-    info = Info(height, width, g)
-    start = info.position_start()
+    # info = Info(maze.height, maze.width, g)
+    g = {}
+    start = maze.entry
     g[start] = 0
-    goal = info.position_goal()
-    brain = Brain(wall, height, width, g)
+    goal = maze.exit
+    brain = Brain(wall, maze.height, maze.width, g)
     open_list = []
     h = brain.heuristic(start, goal)
     open_list.append((h, start))

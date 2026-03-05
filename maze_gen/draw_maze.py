@@ -110,7 +110,7 @@ class MazeDrawing:
                     stdscr.addstr(row_idx, col_idx, char)
 
     def show_path(self, stdscr):
-        path = solver(self.maze.generate_grid_walls_for_solver())
+        path = solver(self.maze)
         for cell in path[1:-1]:
             ##############check the row and col how they returned from path
             row, col = cell

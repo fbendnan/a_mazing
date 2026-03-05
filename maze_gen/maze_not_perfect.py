@@ -125,7 +125,21 @@ class DFSGenerator:
 
             if not moved:
                 self.stack.pop()
-
+    def generate_grid_walls_for_solver(self):
+        grid_walls = []
+        for row in self.grid:
+            row_walls = []
+            for cell in row:
+                cell_walls = [
+                    1 if cell.walls['N'] else 0,
+                    1 if cell.walls['E'] else 0,
+                    1 if cell.walls['S'] else 0,
+                    1 if cell.walls['W'] else 0,
+                ]
+                cell.solver_walls = cell_walls
+                row_walls.append(cell.solver_walls)
+            grid_walls.append(row_walls)
+        return grid_walls
 
     def ft_show(self):
 
