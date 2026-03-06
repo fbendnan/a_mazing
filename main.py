@@ -1,8 +1,8 @@
 import sys
 from mazegen import MazeGenerator
-from .parssing import parse_config
-from .draw_maze import MazeDrawing
-from .output_gen import Output
+from maze_help.parssing import parse_config
+from maze_help.draw_maze import MazeDrawing
+from maze_help.output_gen import Output
 
 import curses
 

@@ -1,62 +1,96 @@
 import random
-from typing import Dict, List
+from typing import Dict, List, Tuple
 from .Cell import Cell
 
 
 class DFSGenerator:
+    """
+    Maze generator using the Depth-First Search (DFS) backtracking algorithm.
 
-    def __init__(self, configuration: Dict):
+    This generator creates a maze by exploring cells recursively and
+    backtracking when no unvisited neighbors remain.
+    """
 
-        self.configuration = configuration
-        self.height = configuration["HEIGHT"]
-        self.width = configuration["WIDTH"]
-        self.entry = configuration["ENTRY"]
-        self.exit = configuration["EXIT"]
-        self.seed = configuration.get("SEED", None)
-        self.perfect = configuration.get("PERFECT", True)
+    def __init__(self, configuration: Dict) -> None:
+        """
+        Initialize the DFS maze generator.
+
+        Args:
+            configuration: Dictionary containing maze configuration
+                parameters such as HEIGHT, WIDTH, ENTRY, EXIT,
+                SEED, and PERFECT.
+        """
+
+        self.configuration: Dict = configuration
+        self.height: int = configuration["HEIGHT"]
+        self.width: int = configuration["WIDTH"]
+        self.entry: Tuple[int, int] = configuration["ENTRY"]
+        self.exit: Tuple[int, int] = configuration["EXIT"]
+        self.seed: int | None = configuration.get("SEED", None)
+        self.perfect: bool = configuration.get("PERFECT", True)
 
         if self.seed is not None:
             random.seed(self.seed)
 
-        self.start = self.entry
-        self.stack :List = []
-        self.grid :List = []
+        self.start: Tuple[int, int] = self.entry
+        self.stack: List[Tuple[int, int]] = []
+        self.grid: List[List[Cell]] = []
 
         self._init_grid()
 
-    def _init_grid(self):
+    def _init_grid(self) -> None:
+        """
+        Initialize the maze grid with Cell objects.
+        """
         for i in range(self.height):
-            row = []
+            row: List[Cell] = []
             for j in range(self.width):
                 row.append(Cell(i, j))
             self.grid.append(row)
 
+    def remove_current_wall(
+        self, row: int, col: int, new_row: int, new_col: int
+    ) -> int:
+        """
+        Remove the wall between the current cell and its neighbor.
 
-    def remove_current_wall(self, row, col, new_row, new_col):
+        Args:
+            row: Current cell row.
+            col: Current cell column.
+            new_row: Neighbor cell row.
+            new_col: Neighbor cell column.
+
+        Returns:
+            1 when the wall is successfully removed.
+        """
 
         current = self.grid[row][col]
         neighbor = self.grid[new_row][new_col]
 
         if row > new_row:
-            current.walls['N'] = False
-            neighbor.walls['S'] = False
+            current.walls["N"] = False
+            neighbor.walls["S"] = False
 
         elif row < new_row:
-            current.walls['S'] = False
-            neighbor.walls['N'] = False
+            current.walls["S"] = False
+            neighbor.walls["N"] = False
 
         elif new_col > col:
-            current.walls['E'] = False
-            neighbor.walls['W'] = False
+            current.walls["E"] = False
+            neighbor.walls["W"] = False
 
         elif new_col < col:
-            current.walls['W'] = False
-            neighbor.walls['E'] = False
+            current.walls["W"] = False
+            neighbor.walls["E"] = False
 
         return 1
 
+    def visited_before_42(self) -> None:
+        """
+        Mark a predefined '42 pattern' in the maze as visited cells.
 
-    def visited_before_42(self):
+        These cells are protected so the generator avoids modifying them.
+        """
 
         pattern_42 = [
             [1, 0, 0, 0, 1, 1, 1],
@@ -83,7 +117,10 @@ class DFSGenerator:
                     cell.is_visited = True
                     cell.is_cell_42 = True
 
-    def ft_algo(self):
+    def ft_algo(self) -> None:
+        """
+        Core DFS maze generation algorithm using a stack.
+        """
 
         start_row, start_col = self.start
         start_cell = self.grid[start_row][start_col]
@@ -94,11 +131,11 @@ class DFSGenerator:
 
             row, col = self.stack[-1]
 
-            neighbors = [
+            neighbors: List[Tuple[int, int]] = [
                 (row + 1, col),
                 (row - 1, col),
                 (row, col + 1),
-                (row, col - 1)
+                (row, col - 1),
             ]
 
             random.shuffle(neighbors)
@@ -120,32 +157,56 @@ class DFSGenerator:
                         moved = True
                         break
 
-                    elif random.random() < 0.1 and not neighbor.is_cell_42 and not self.configuration["PERFECT"]:
+                    elif (
+                        random.random() < 0.1
+                        and not neighbor.is_cell_42
+                        and not self.configuration["PERFECT"]
+                    ):
                         self.remove_current_wall(row, col, new_row, new_col)
 
             if not moved:
                 self.stack.pop()
 
-    def generate_grid_walls_for_solver(self):
-        grid_walls = []
+    def generate_grid_walls_for_solver(self) -> List[List[List[int]]]:
+        """
+        Convert the maze grid into a wall representation for the solver.
+
+        Returns:
+            A 3D list where each cell contains walls in the
+            order [N, E, S, W].
+        """
+
+        grid_walls: List[List[List[int]]] = []
+
         for row in self.grid:
-            row_walls = []
+            row_walls: List[List[int]] = []
+
             for cell in row:
                 cell_walls = [
-                    1 if cell.walls['N'] else 0,
-                    1 if cell.walls['E'] else 0,
-                    1 if cell.walls['S'] else 0,
-                    1 if cell.walls['W'] else 0,
+                    1 if cell.walls["N"] else 0,
+                    1 if cell.walls["E"] else 0,
+                    1 if cell.walls["S"] else 0,
+                    1 if cell.walls["W"] else 0,
                 ]
+
                 cell.solver_walls = cell_walls
                 row_walls.append(cell.solver_walls)
+
             grid_walls.append(row_walls)
+
         return grid_walls
 
-    def generate(self):
+    def generate(self) -> None:
+        """
+        Generate the maze using the DFS algorithm.
+        """
+
         self.visited_before_42()
+
         x, y = self.entry
         i, j = self.exit
+
         if self.grid[y][x].is_cell_42 or self.grid[j][i].is_cell_42:
             raise ValueError("Entry and exit should be outside 42")
+
         self.ft_algo()
