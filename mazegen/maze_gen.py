@@ -1,4 +1,4 @@
-from typing import Dict, List
+from typing import Dict, List, Any
 from .DFS_algo import DFSGenerator
 from .Prim_algo import PrimeGenerator
 
@@ -33,8 +33,8 @@ class MazeGenerator:
         self.seed: int | None = configuration.get("SEED", None)
         self.perfect: bool = configuration.get("PERFECT", True)
 
-        self.maze = None
-        self.grid = None
+        self.maze: Any= []
+        self.grid: Any= []
 
     def generate(self) -> None:
         """

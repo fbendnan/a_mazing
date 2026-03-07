@@ -1,7 +1,7 @@
 import curses
 import random
 # import time
-from typing import List, Tuple, Optional
+from typing import List, Tuple, Optional, Any
 from .output_gen import Output
 from mazegen.maze_gen import MazeGenerator
 from .a_star import solver
@@ -33,11 +33,11 @@ class MazeDrawing:
         """
         self.canvas_height: int = maze.height * (CELL_H + 1) + 1
         self.canvas_width: int = maze.width * (CELL_W + 1) + 1
-        self.maze_canvas: Optional[List[List[str]]] = None
+        self.maze_canvas: List[List[str]] = []
         self.maze: MazeGenerator = maze
         self.scr_height: int = 0
         self.scr_width: int = 0
-        self.path: Optional[List[Tuple[int, int]]] = []
+        self.path: List[Tuple[int, int]] = []
 
     def build_maze_canvas(self) -> None:
         """
@@ -154,14 +154,14 @@ class MazeDrawing:
             stdscr: The curses window used for drawing.
             maze_color: The color pair index used for maze walls.
         """
-        curses.init_pair(1, curses.COLOR_BLUE, -1),
-        curses.init_pair(2, curses.COLOR_GREEN, -1),
-        curses.init_pair(3, curses.COLOR_MAGENTA, -1),
-        curses.init_pair(4, curses.COLOR_RED, -1),
-        curses.init_pair(5, curses.COLOR_YELLOW, -1),
-        curses.init_pair(6, curses.COLOR_WHITE, -1),
-        curses.init_pair(7, curses.COLOR_BLACK, -1),
-        curses.init_pair(8, curses.COLOR_CYAN, -1),
+        curses.init_pair(1, curses.COLOR_BLUE, -1)
+        curses.init_pair(2, curses.COLOR_GREEN, -1)
+        curses.init_pair(3, curses.COLOR_MAGENTA, -1)
+        curses.init_pair(4, curses.COLOR_RED, -1)
+        curses.init_pair(5, curses.COLOR_YELLOW, -1)
+        curses.init_pair(6, curses.COLOR_WHITE, -1)
+        curses.init_pair(7, curses.COLOR_BLACK, -1)
+        curses.init_pair(8, curses.COLOR_CYAN, -1)
 
         for row_idx, row in enumerate(self.maze_canvas):
             for col_idx, char in enumerate(row):
@@ -182,15 +182,12 @@ class MazeDrawing:
         Args:
             stdscr: The curses window used for drawing.
         """
-        self.path = solver(self.maze)
-        output = Output(self.maze.configuration, self.maze, self.path)
-        output.process_maze()
-        output.ft_write_the_path()
-        for cell in self.path[1:-1]:
-            row, col = cell
-            row_pos = row * (CELL_H + 1) + 1
-            col_pos = col * (CELL_W + 1) + 1
-            stdscr.addstr(row_pos, col_pos, "🐾")
+        if len(self.path) > 2:
+            for cell in self.path[1:-1]:
+                row, col = cell
+                row_pos = row * (CELL_H + 1) + 1
+                col_pos = col * (CELL_W + 1) + 1
+                stdscr.addstr(row_pos, col_pos, "🐾")
 
     def draw(self, stdscr: curses.window, maze_color: int) -> None:
         """
@@ -208,7 +205,7 @@ class MazeDrawing:
         self.print_choices(stdscr)
         stdscr.refresh()
 
-    def main(self, stdscr: curses.window) -> None:
+    def main(self, stdscr: Any) -> None:
         """
         Main curses loop that controls the maze application.
 
@@ -225,15 +222,13 @@ class MazeDrawing:
         stdscr.keypad(True)
 
         is_path: bool = False
-        regenerate_path = False
         color: int = 1
 
         while True:
-            
+            self.path = solver(self.maze)
             output = Output(self.maze.configuration, self.maze, self.path)
             output.process_maze()
-            if regenerate_path:
-                output.ft_write_the_path()
+
             self.scr_height, self.scr_width = stdscr.getmaxyx()
 
             if (
@@ -265,14 +260,13 @@ class MazeDrawing:
             self.draw(stdscr, color)
 
             if is_path:
-                regenerate_path = True
                 self.show_path(stdscr)
 
             stdscr.refresh()
             key = stdscr.getch()
 
             if key == ord("1"):
-                regenerate_path = False
+                self.path = solver(self.maze)
                 if self.maze.seed is not None:
                     self.maze.configuration["SEED"] = None
 
