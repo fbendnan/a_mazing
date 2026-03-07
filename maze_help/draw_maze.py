@@ -185,6 +185,7 @@ class MazeDrawing:
         self.path = solver(self.maze)
         output = Output(self.maze.configuration, self.maze, self.path)
         output.process_maze()
+        output.ft_write_the_path()
         for cell in self.path[1:-1]:
             row, col = cell
             row_pos = row * (CELL_H + 1) + 1
@@ -224,11 +225,15 @@ class MazeDrawing:
         stdscr.keypad(True)
 
         is_path: bool = False
+        regenerate_path = False
         color: int = 1
 
         while True:
+            
             output = Output(self.maze.configuration, self.maze, self.path)
             output.process_maze()
+            if regenerate_path:
+                output.ft_write_the_path()
             self.scr_height, self.scr_width = stdscr.getmaxyx()
 
             if (
@@ -260,12 +265,14 @@ class MazeDrawing:
             self.draw(stdscr, color)
 
             if is_path:
+                regenerate_path = True
                 self.show_path(stdscr)
 
             stdscr.refresh()
             key = stdscr.getch()
 
             if key == ord("1"):
+                regenerate_path = False
                 if self.maze.seed is not None:
                     self.maze.configuration["SEED"] = None
 

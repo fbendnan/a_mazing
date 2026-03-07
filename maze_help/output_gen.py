@@ -69,4 +69,4 @@ class Output():
         file.write("\n")
         file.close()
         self.ft_write_entry_exit()
-        self.ft_write_the_path()
+        # self.ft_write_the_path()

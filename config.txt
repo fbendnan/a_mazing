@@ -5,4 +5,4 @@ Exit = 1,0
 OUTPUT_FILE=  maze.txt
 PERFECT=true
 seed =6
-algo=   dfs
+algo=   prim
