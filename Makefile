@@ -21,6 +21,7 @@ clean:
 	@rm -rf __pycache__
 	@rm -rf .mypy_cache
 	@rm -rf mazegen/__pycache__
+	@rm -rf maze_help/__pycache__
 	@find . -name "*.pyc" -delete
 	@rm -rf dist
 	@rm -rf output_validator.py
