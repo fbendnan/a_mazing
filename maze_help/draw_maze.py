@@ -1,7 +1,6 @@
 import curses
 import random
-# import time
-from typing import List, Tuple, Optional, Any
+from typing import List, Tuple, Any
 from .output_gen import Output
 from mazegen.maze_gen import MazeGenerator
 from .a_star import solver

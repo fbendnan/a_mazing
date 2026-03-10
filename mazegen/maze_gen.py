@@ -1,4 +1,4 @@
-from typing import Dict, List, Any
+from typing import Dict, Any
 from .DFS_algo import DFSGenerator
 from .Prim_algo import PrimeGenerator
 
@@ -12,7 +12,7 @@ class MazeGenerator:
     and solver wall representation.
     """
 
-    def __init__(self, configuration: Dict) -> None:
+    def __init__(self, configuration: Dict[Any, Any]) -> None:
         """
         Initialize the maze generator.
 
@@ -21,7 +21,7 @@ class MazeGenerator:
                 HEIGHT, WIDTH, ENTRY, EXIT, ALGO, SEED, and PERFECT.
         """
 
-        self.configuration: Dict = configuration
+        self.configuration: Dict[Any, Any] = configuration
         self.algo: str = configuration.get("ALGO", "PRIM")
 
         self.height: int = configuration["HEIGHT"]
@@ -33,8 +33,8 @@ class MazeGenerator:
         self.seed: int | None = configuration.get("SEED", None)
         self.perfect: bool = configuration.get("PERFECT", True)
 
-        self.maze: Any= []
-        self.grid: Any= []
+        self.maze: Any = []
+        self.grid: Any = []
 
     def generate(self) -> None:
         """

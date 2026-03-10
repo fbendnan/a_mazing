@@ -1,5 +1,5 @@
 import random
-from typing import Dict, List, Tuple
+from typing import Dict, List, Tuple, Any
 from .Cell import Cell
 
 
@@ -11,7 +11,7 @@ class DFSGenerator:
     backtracking when no unvisited neighbors remain.
     """
 
-    def __init__(self, configuration: Dict) -> None:
+    def __init__(self, configuration: Dict[Any, Any]) -> None:
         """
         Initialize the DFS maze generator.
 
@@ -21,7 +21,7 @@ class DFSGenerator:
                 SEED, and PERFECT.
         """
 
-        self.configuration: Dict = configuration
+        self.configuration: Dict[Any, Any] = configuration
         self.height: int = configuration["HEIGHT"]
         self.width: int = configuration["WIDTH"]
         self.entry: Tuple[int, int] = configuration["ENTRY"]
@@ -93,11 +93,12 @@ class DFSGenerator:
         """
 
         pattern_42 = [
-            [1, 0, 0, 0, 1, 1, 1],
-            [1, 0, 0, 0, 0, 0, 1],
-            [1, 1, 1, 0, 1, 1, 1],
-            [0, 0, 1, 0, 1, 0, 0],
-            [0, 0, 1, 0, 1, 1, 1],
+            [0, 0, 0, 0, 0, 0, 0, 0],
+            [0, 1, 0, 0, 0, 1, 1, 1],
+            [0, 1, 0, 0, 0, 0, 0, 1],
+            [0, 1, 1, 1, 0, 1, 1, 1],
+            [0, 0, 0, 1, 0, 1, 0, 0],
+            [0, 0, 0, 1, 0, 1, 1, 1],
         ]
 
         pattern_rows = len(pattern_42)
@@ -206,7 +207,7 @@ class DFSGenerator:
         x, y = self.entry
         i, j = self.exit
 
-        if self.grid[y][x].is_cell_42 or self.grid[j][i].is_cell_42:
+        if self.grid[x][y].is_cell_42 or self.grid[i][j].is_cell_42:
             raise ValueError("Entry and exit should be outside 42")
 
         self.ft_algo()

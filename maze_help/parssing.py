@@ -1,4 +1,4 @@
-from typing import Dict, Tuple, Any
+from typing import Dict, Any
 
 H_42: int = 5
 W_42: int = 7
@@ -69,7 +69,8 @@ def parse_config(config_file: str) -> Dict[str, Any]:
                 parts = value.split(",")
 
                 if len(parts) != 2:
-                    raise ValueError(f"{key} must contain two coordinates (x,y)")
+                    raise ValueError(
+                        f"{key} must contain two coordinates (x,y)")
 
                 try:
                     x = int(parts[0].strip())

@@ -1,6 +1,6 @@
 import random
 from .Cell import Cell
-from typing import Dict, Set, List, Tuple
+from typing import Dict, Set, List, Tuple, Any
 
 DIRS: Dict[str, Tuple[int, int]] = {
     "N": (0, -1),
@@ -26,7 +26,7 @@ class PrimeGenerator:
     and optionally introduces loops to create non-perfect mazes.
     """
 
-    def __init__(self, configuration: Dict) -> None:
+    def __init__(self, configuration: Dict[Any, Any]) -> None:
         """
         Initialize the maze generator.
 
@@ -35,7 +35,7 @@ class PrimeGenerator:
                 parameters such as HEIGHT, WIDTH, ENTRY, EXIT, SEED,
                 and PERFECT.
         """
-        self.configuration: Dict = configuration
+        self.configuration: Dict[Any, Any] = configuration
         self.height: int = configuration["HEIGHT"]
         self.width: int = configuration["WIDTH"]
         self.entry: Tuple[int, int] = configuration["ENTRY"]
@@ -70,8 +70,8 @@ class PrimeGenerator:
         These cells are marked as visited so the generator
         avoids carving paths through them.
         """
-        mid_h = self.height // 2
-        mid_w = self.width // 2
+        mid_h = int(self.height // 2)
+        mid_w = int(self.width // 2)
 
         for dx, dy in CELLS_42_offset:
             nx = mid_h + dx
