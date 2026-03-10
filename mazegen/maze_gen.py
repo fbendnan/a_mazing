@@ -57,7 +57,7 @@ class MazeGenerator:
         self.maze.generate()
         self.grid = self.maze.grid
 
-    def get_solver_walls(self) -> List:
+    def get_solver_walls(self) -> Any:
         """
         Return the maze walls formatted for the pathfinding solver.
 
