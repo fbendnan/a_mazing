@@ -1,8 +1,8 @@
-width = 11
-HEIGHT=9
-ENTRY=1,6
-Exit = 1,0
+width = 10
+HEIGHT=7
+ENTRY=4,2
+Exit = 5,3
 OUTPUT_FILE=  maze.txt
 PERFECT=true
 seed =6
-algo=   prim
+algo = prim
