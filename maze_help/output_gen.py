@@ -51,7 +51,7 @@ class Output:
         return ""
 
     def ft_write_the_path(self) -> None:
-        with open("output.txt", "a") as file:
+        with open(self.conf["OUTPUT_FILE"], "a") as file:
             for i in range(1, len(self.path)):
                 current = self.path[i]
                 previous = self.path[i - 1]
@@ -59,7 +59,7 @@ class Output:
                 file.write(direction)
 
     def ft_write_entry_exit(self) -> None:
-        with open("output.txt", "a") as file:
+        with open(self.conf["OUTPUT_FILE"], "a") as file:
             x, y = self.conf["ENTRY"]
             file.write(f"{x},{y}\n")
 
@@ -67,7 +67,7 @@ class Output:
             file.write(f"{x},{y}\n")
 
     def process_maze(self) -> None:
-        with open("output.txt", "w") as file:
+        with open(self.conf["OUTPUT_FILE"], "w") as file:
             walls: List[List[List[int]]] = self.maze.get_solver_walls()
 
             for row in walls:
