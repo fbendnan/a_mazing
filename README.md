@@ -1,6 +1,6 @@
 # A-Maze-ing
 
-*This project has been created as part of the 42 curriculum by fbendnan, cramadan.*
+*This project has been created as part of the 42 curriculum by \<fbendnan\>, \<cramadan\>.*
 
 ---
 

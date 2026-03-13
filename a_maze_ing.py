@@ -10,6 +10,7 @@ try:
         raise ValueError("You should enter: python3 a_maze_ing.py config.txt")
     CONFIG_FILE = sys.argv[1]
     configuration = parse_config(CONFIG_FILE)
+    # print("the configuration of your maze is:")
     maze = MazeGenerator(configuration)
     maze.generate()
 

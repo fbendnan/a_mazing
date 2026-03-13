@@ -85,7 +85,7 @@ class MazeDrawing:
         Args:
             stdscr: The curses window used for drawing.
         """
-        curses.init_pair(2, curses.COLOR_WHITE, -1)
+        curses.init_pair(8, curses.COLOR_WHITE, -1)
 
         for x in range(self.maze.height):
             for y in range(self.maze.width):
@@ -101,7 +101,7 @@ class MazeDrawing:
                                 row_pos + i,
                                 col_pos + j,
                                 " ",
-                                curses.color_pair(2) | curses.A_REVERSE,
+                                curses.color_pair(8) | curses.A_REVERSE,
                             )
 
     def print_choices(self, stdscr: curses.window) -> None:
@@ -158,9 +158,8 @@ class MazeDrawing:
         curses.init_pair(3, curses.COLOR_MAGENTA, -1)
         curses.init_pair(4, curses.COLOR_RED, -1)
         curses.init_pair(5, curses.COLOR_YELLOW, -1)
-        curses.init_pair(6, curses.COLOR_WHITE, -1)
         curses.init_pair(7, curses.COLOR_BLACK, -1)
-        curses.init_pair(8, curses.COLOR_CYAN, -1)
+        curses.init_pair(6, curses.COLOR_CYAN, -1)
 
         for row_idx, row in enumerate(self.maze_canvas):
             for col_idx, char in enumerate(row):
@@ -276,7 +275,7 @@ class MazeDrawing:
                 is_path = not is_path
 
             elif key == ord("3"):
-                color = random.randint(1, 8)
+                color = random.randint(1, 7)
 
             elif key == ord("4"):
                 break

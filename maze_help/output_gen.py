@@ -1,15 +1,15 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Any
 from mazegen.maze_gen import MazeGenerator
 
 
 class Output:
     def __init__(
         self,
-        conf: Dict[str, Tuple[int, int]],
+        conf: Dict[str, Any],
         maze: MazeGenerator,
         path: List[Tuple[int, int]],
     ) -> None:
-        self.conf: Dict[str, Tuple[int, int]] = conf
+        self.conf: Dict[str, Any] = conf
         self.maze: MazeGenerator = maze
         self.path: List[Tuple[int, int]] = path
 
